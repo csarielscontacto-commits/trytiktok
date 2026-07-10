@@ -146,7 +146,7 @@
   #chart-container{width:100%; height:340px; background:var(--fondo-grafico); position:relative;}
   #indicador-container{width:100%; height:100px; border-top:1px solid #1f1a16; background:var(--fondo-grafico);}
 
-  /* PANEL DE INFORMACIÓN DE INDICADORES */
+  /* PANEL DE INFORMACIÓN DE INDICADORES (como en la imagen) */
   .indicadores-info{
     display:flex;
     flex-wrap:wrap;
@@ -510,54 +510,46 @@
     position:fixed;
     top:0; left:0;
     width:100%; height:100%;
-    background:rgba(0,0,0,0.85);
+    background:rgba(0,0,0,0.75);
     z-index:2000;
     align-items:center;
     justify-content:center;
     padding:20px;
-    backdrop-filter:blur(8px);
+    backdrop-filter:blur(4px);
   }
   .modal-overlay.activo{display:flex;}
   .modal-caja{
     background:var(--panel);
     border-radius:14px;
-    max-width:600px;
+    max-width:400px;
     width:100%;
-    max-height:85vh;
+    max-height:80vh;
     overflow-y:auto;
-    padding:20px 20px;
+    padding:20px 16px;
     border:1px solid #2a221c;
-    box-shadow:0 20px 60px rgba(0,0,0,0.8);
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
     position:relative;
   }
-  .modal-caja::-webkit-scrollbar{width:4px;}
-  .modal-caja::-webkit-scrollbar-thumb{background:var(--trigo); border-radius:4px;}
-  .modal-caja::-webkit-scrollbar-track{background:transparent;}
-  
   .modal-cerrar{
-    position:sticky;
-    top:0;
-    float:right;
+    position:absolute;
+    top:10px;
+    right:10px;
     background:#0d0b0a;
     border:1px solid #1f1a16;
     color:var(--texto);
-    width:28px;
-    height:28px;
+    width:26px;
+    height:26px;
     border-radius:50%;
-    font-size:0.9rem;
+    font-size:0.8rem;
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:10;
-    transition:all 0.2s;
   }
-  .modal-cerrar:hover{background:#2a221c; border-color:var(--trigo);}
-  
   .modal-titulo{
     font-family:'Fraunces',serif;
     color:var(--trigo);
-    font-size:1.1rem;
+    font-size:1rem;
     margin-bottom:12px;
     padding-right:30px;
   }
@@ -568,59 +560,6 @@
     color:#b8a898;
   }
   .modal-punto strong{color:var(--trigo);}
-  
-  .modal-contenido-legal{
-    max-height:55vh;
-    overflow-y:auto;
-    padding-right:8px;
-    font-size:0.75rem;
-    color:#b8a898;
-    line-height:1.6;
-  }
-  .modal-contenido-legal::-webkit-scrollbar{width:3px;}
-  .modal-contenido-legal::-webkit-scrollbar-thumb{background:var(--trigo); border-radius:4px;}
-  
-  .modal-contenido-legal .capitulo{
-    color:var(--trigo);
-    font-weight:600;
-    margin:12px 0 6px;
-    font-size:0.8rem;
-  }
-  .modal-contenido-legal .articulo{
-    color:#d4af7a;
-    margin:6px 0 2px;
-    font-weight:500;
-    font-size:0.78rem;
-  }
-  .modal-contenido-legal .texto{
-    margin-bottom:4px;
-    padding-left:4px;
-  }
-  .modal-contenido-legal .texto strong{color:#e8d5b8;}
-  
-  .modal-footer-legal{
-    border-top:1px solid #2a221c;
-    margin:16px 0 8px;
-    padding-top:12px;
-    text-align:center;
-    color:#6a5d50;
-    font-size:0.65rem;
-  }
-  
-  .btn-aceptar-legal{
-    width:100%;
-    margin-top:12px;
-    padding:10px;
-    background:linear-gradient(135deg, var(--trigo), #b8945a);
-    border:none;
-    border-radius:8px;
-    color:var(--masa);
-    font-weight:700;
-    font-size:0.85rem;
-    cursor:pointer;
-    transition:all 0.2s;
-  }
-  .btn-aceptar-legal:hover{transform:scale(1.01); box-shadow:0 4px 20px rgba(212,175,122,0.2);}
 </style>
 </head>
 <body>
@@ -683,7 +622,7 @@
   <button data-tf="1d" class="activo">1d</button>
 </div>
 
-<!-- INDICADORES INFO -->
+<!-- INDICADORES INFO (como en la imagen) -->
 <div class="indicadores-info" id="indicadores-info">
   <span class="bb">📊 BB(20,2) <span class="valor trigo" id="bb-info">U:-- M:-- L:--</span></span>
   <span class="vol">📈 Vol: <span class="valor" id="vol-info">--</span></span>
@@ -757,152 +696,20 @@
 
 <!-- FOOTER -->
 <div class="footer-legal">
-  <button class="link-legal" id="btn-abrir-legal">📜 Ver Términos y Condiciones completos</button>
+  <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
   <span style="color:#3a2f26;">·</span>
-  <span style="color:#6a5d50; font-size:0.6rem;">v2.0 — 81 Artículos</span>
+  <a class="link-legal" href="terminos-legales.html" target="_blank">Términos y Condiciones completos</a>
 </div>
 
-<!-- ================================================================
-     MODAL DE TÉRMINOS Y CONDICIONES COMPLETO (81 ARTÍCULOS)
-     ================================================================ -->
-<div class="modal-overlay" id="modal-legal-completo">
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-legal-overlay">
   <div class="modal-caja">
-    <button class="modal-cerrar" id="modal-legal-cerrar">✕</button>
-    <h2 class="modal-titulo">📜 Términos y Condiciones del Ecosistema Sariel's</h2>
-    
-    <div class="modal-contenido-legal">
-      
-      <!-- PREÁMBULO -->
-      <div class="capitulo">📖 PREÁMBULO</div>
-      <p class="texto">El presente documento constituye el marco legal y operativo del Ecosistema Sariel's, estableciendo las bases bajo las cuales el Token TOK opera como un activo de intercambio digital dentro de un ecosistema de fidelización y redención de productos físicos.</p>
-      
-      <!-- CAPÍTULO I -->
-      <div class="capitulo">📘 CAPÍTULO I: DISPOSICIONES GENERALES</div>
-      
-      <div class="articulo">Artículo 1. Objeto del Ecosistema</div>
-      <p class="texto">El Ecosistema Sariel's tiene como objeto principal la creación de un sistema de fidelización y recompensa que permita a los titulares de NFTs Sariel's acceder a beneficios y descuentos en la adquisición de productos físicos de la marca, a través de la utilización del Token TOK como medio de intercambio dentro de la plataforma.</p>
-      
-      <div class="articulo">Artículo 2. Definiciones Fundamentales</div>
-      <p class="texto"><strong>2.1. Ecosistema Sariel's:</strong> Conjunto de plataformas digitales, contratos inteligentes, tokens y productos físicos que conforman el sistema de fidelización de la marca.</p>
-      <p class="texto"><strong>2.2. Token TOK:</strong> Activo digital utilitario emitido dentro del Ecosistema Sariel's, cuya función principal es servir como medio de intercambio para la obtención de beneficios y descuentos en productos de la marca.</p>
-      <p class="texto"><strong>2.3. NFT Sariel's:</strong> Token No Fungible que acredita a su titular como miembro del programa de fidelización y le otorga derechos específicos dentro del Ecosistema.</p>
-      <p class="texto"><strong>2.4. Domo de Galleta:</strong> Producto físico de la marca Sariel's, sujeto a los beneficios y descuentos establecidos en el presente marco.</p>
-      <p class="texto"><strong>2.5. Plataforma de Trading:</strong> Interfaz digital que permite a los usuarios intercambiar Tokens TOK entre sí, bajo las condiciones establecidas en el presente marco.</p>
-      <p class="texto"><strong>2.6. Comisión:</strong> Tarifa del 1% (uno por ciento) aplicable a cada transacción de compra o venta de Tokens TOK, destinada al mantenimiento y desarrollo del Ecosistema.</p>
-      <p class="texto"><strong>2.7. Valor de Redención:</strong> El Token TOK tiene un valor de redención equivalente a $6.25 MXN por unidad, calculado como el precio del domo ($75.00 MXN) dividido entre los 12 TOK necesarios para obtener un NFT.</p>
-      
-      <div class="articulo">Artículo 3. Naturaleza Jurídica del Token TOK</div>
-      <p class="texto"><strong>3.1.</strong> El Token TOK NO constituye un valor mobiliario, inversión o instrumento financiero regulado por la Ley del Mercado de Valores.</p>
-      <p class="texto"><strong>3.2.</strong> El Token TOK NO otorga derechos de propiedad, participación, voto o gobernanza sobre la marca Sariel's o sus operaciones comerciales.</p>
-      <p class="texto"><strong>3.3.</strong> El Token TOK es exclusivamente un activo de intercambio utilitario, cuyo valor está determinado únicamente por la oferta y demanda entre los usuarios de la plataforma.</p>
-      <p class="texto"><strong>3.4.</strong> La marca Sariel's NO garantiza ni promete un valor mínimo, máximo o esperado del Token TOK en relación con sus productos físicos.</p>
-      
-      <div class="articulo">Artículo 4. Principios Rectores</div>
-      <p class="texto"><strong>4.1. Libre Mercado:</strong> El precio del Token TOK será determinado exclusivamente por las fuerzas de oferta y demanda entre los usuarios.</p>
-      <p class="texto"><strong>4.2. No Manipulación:</strong> La marca Sariel's se abstendrá de manipular directa o indirectamente el precio del Token TOK.</p>
-      <p class="texto"><strong>4.3. Transparencia:</strong> Todas las operaciones y transacciones realizadas en la plataforma serán registradas y estarán disponibles para auditoría.</p>
-      <p class="texto"><strong>4.4. No Conflicto:</strong> La marca Sariel's, sus empleados y representantes podrán participar en el mercado del Token TOK como usuarios comunes, siempre que lo hagan en igualdad de condiciones que el resto de los usuarios.</p>
-      
-      <!-- CAPÍTULO II -->
-      <div class="capitulo">📗 CAPÍTULO II: DERECHOS Y OBLIGACIONES DE LOS USUARIOS</div>
-      
-      <div class="articulo">Artículo 5. Derechos de los Usuarios</div>
-      <p class="texto"><strong>5.1.</strong> Todo usuario tiene derecho a participar en el Ecosistema Sariel's mediante la adquisición, tenencia e intercambio de Tokens TOK.</p>
-      <p class="texto"><strong>5.2.</strong> Los titulares de NFTs Sariel's tienen derecho a obtener un descuento de $75.00 MXN en la adquisición de domos de galleta, como beneficio exclusivo de su NFT.</p>
-      <p class="texto"><strong>5.3.</strong> Los usuarios tienen derecho a acceder a la información de sus transacciones, saldos y órdenes en todo momento.</p>
-      <p class="texto"><strong>5.4.</strong> Los usuarios tienen derecho a retirar sus Tokens TOK a sus propias wallets, sin restricciones ni bloqueos.</p>
-      
-      <div class="articulo">Artículo 6. Obligaciones de los Usuarios</div>
-      <p class="texto"><strong>6.1.</strong> Los usuarios se obligan a utilizar el Ecosistema Sariel's conforme a las leyes aplicables y al presente marco legal.</p>
-      <p class="texto"><strong>6.2.</strong> Los usuarios se obligan a pagar la comisión del 1% establecida en el Artículo 2.6 por cada transacción realizada.</p>
-      <p class="texto"><strong>6.3.</strong> Los usuarios se obligan a no realizar prácticas de manipulación de mercado, incluyendo pero no limitándose a: lavado de dinero, "wash trading", "spoofing" o cualquier otra práctica que distorsione el precio del Token TOK.</p>
-      <p class="texto"><strong>6.4.</strong> Los usuarios se obligan a mantener seguras sus claves privadas y a no compartir el acceso a sus wallets con terceros.</p>
-      <p class="texto"><strong>6.5.</strong> Los usuarios aceptan que el valor del Token TOK puede fluctuar y que la marca Sariel's no es responsable por pérdidas derivadas de dichas fluctuaciones.</p>
-      
-      <div class="articulo">Artículo 7. Condiciones de Uso de la Plataforma</div>
-      <p class="texto"><strong>7.1.</strong> La plataforma de trading opera en la red blockchain Polygon Amoy (testnet) y/o Mainnet, según se determine.</p>
-      <p class="texto"><strong>7.2.</strong> Los usuarios deben contar con una wallet compatible (MetaMask o similar) para interactuar con la plataforma.</p>
-      <p class="texto"><strong>7.3.</strong> Las transacciones realizadas en la plataforma son irreversibles, al igual que cualquier transacción en blockchain.</p>
-      <p class="texto"><strong>7.4.</strong> La plataforma se reserva el derecho de limitar, suspender o cancelar el acceso de cualquier usuario que viole el presente marco legal.</p>
-      
-      <!-- CAPÍTULO III -->
-      <div class="capitulo">📙 CAPÍTULO III: OPERACIONES DE MERCADO</div>
-      
-      <div class="articulo">Artículo 8. Formación del Precio</div>
-      <p class="texto"><strong>8.1.</strong> El precio del Token TOK se forma exclusivamente a través de las operaciones de compra y venta realizadas entre los usuarios en la plataforma.</p>
-      <p class="texto"><strong>8.2.</strong> Las velas y gráficos de precio reflejan exclusivamente las operaciones ejecutadas en la plataforma.</p>
-      <p class="texto"><strong>8.3.</strong> La marca Sariel's NO interviene en la formación del precio del Token TOK.</p>
-      <p class="texto"><strong>8.4.</strong> La marca Sariel's NO realiza operaciones de compra o venta que afecten el precio del Token TOK, salvo que lo haga en igualdad de condiciones que el resto de los usuarios.</p>
-      
-      <div class="articulo">Artículo 9. Comisión por Transacción</div>
-      <p class="texto"><strong>9.1.</strong> Cada transacción de compra o venta de Tokens TOK realizada en la plataforma está sujeta a una comisión del 1% (uno por ciento).</p>
-      <p class="texto"><strong>9.2.</strong> La comisión es deducida automáticamente del total de la transacción.</p>
-      <p class="texto"><strong>9.3.</strong> La comisión se destina al mantenimiento, desarrollo y operación del Ecosistema Sariel's.</p>
-      
-      <div class="articulo">Artículo 10. Quema de Tokens</div>
-      <p class="texto"><strong>10.1.</strong> La quema de Tokens TOK se produce automáticamente cuando un titular de NFT Sariel's ejerce su derecho de redención (descuento de $75.00 MXN).</p>
-      <p class="texto"><strong>10.2.</strong> La quema consiste en la destrucción permanente de 12 Tokens TOK por cada NFT canjeado.</p>
-      <p class="texto"><strong>10.3.</strong> La quema de Tokens TOK es un evento deflacionario que reduce la oferta total circulante.</p>
-      <p class="texto"><strong>10.4.</strong> La quema de Tokens TOK NO afecta directamente el precio del Token TOK; el efecto es indirecto a través de la reducción de oferta.</p>
-      
-      <div class="articulo">Artículo 11. Market Making Inicial</div>
-      <p class="texto"><strong>11.1.</strong> Para facilitar el arranque del mercado y proporcionar liquidez inicial, la marca Sariel's podrá colocar órdenes de compra y venta de Tokens TOK.</p>
-      <p class="texto"><strong>11.2.</strong> Dichas órdenes se realizarán en igualdad de condiciones que el resto de los usuarios y no constituyen manipulación de mercado.</p>
-      <p class="texto"><strong>11.3.</strong> El objetivo del market making inicial es exclusivamente proporcionar liquidez y funcionalidad a la plataforma.</p>
-      
-      <!-- CAPÍTULO IV -->
-      <div class="capitulo">📕 CAPÍTULO IV: REDENCIÓN Y BENEFICIOS</div>
-      
-      <div class="articulo">Artículo 12. Derecho de Redención</div>
-      <p class="texto"><strong>12.1.</strong> El titular de un NFT Sariel's tiene derecho a un descuento de $75.00 MXN en la adquisición de domos de galleta.</p>
-      <p class="texto"><strong>12.2.</strong> Para ejercer este derecho, el titular debe quemar 12 Tokens TOK en la plataforma.</p>
-      <p class="texto"><strong>12.3.</strong> El descuento es personal e intransferible, y solo puede ser ejercido por el titular del NFT.</p>
-      
-      <div class="articulo">Artículo 13. Beneficios Adicionales</div>
-      <p class="texto"><strong>13.1.</strong> La marca Sariel's podrá ofrecer beneficios adicionales a los titulares de NFTs o poseedores de Tokens TOK, incluyendo: acceso a productos exclusivos, participación en sorteos, descuentos en futuras colecciones, eventos y experiencias exclusivas.</p>
-      
-      <!-- CAPÍTULO V -->
-      <div class="capitulo">📒 CAPÍTULO V: GOBIERNO Y ADMINISTRACIÓN</div>
-      
-      <div class="articulo">Artículo 15. Administración del Ecosistema</div>
-      <p class="texto"><strong>15.1.</strong> La administración del Ecosistema Sariel's está a cargo de la marca Sariel's.</p>
-      <p class="texto"><strong>15.2.</strong> La marca Sariel's podrá delegar funciones de administración en terceros, manteniendo siempre la responsabilidad final.</p>
-      
-      <div class="articulo">Artículo 16. Modificaciones al Marco Legal</div>
-      <p class="texto"><strong>16.1.</strong> El presente marco legal podrá ser modificado por la marca Sariel's en cualquier momento.</p>
-      <p class="texto"><strong>16.2.</strong> Las modificaciones entrarán en vigor 30 días después de su notificación a los usuarios.</p>
-      
-      <!-- CAPÍTULO VI -->
-      <div class="capitulo">📔 CAPÍTULO VI: PRIVACIDAD Y SEGURIDAD</div>
-      
-      <div class="articulo">Artículo 18. Protección de Datos Personales</div>
-      <p class="texto"><strong>18.1.</strong> La marca Sariel's se compromete a proteger los datos personales de los usuarios conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.</p>
-      
-      <!-- CAPÍTULO VII -->
-      <div class="capitulo">📓 CAPÍTULO VII: DISPOSICIONES FINALES</div>
-      
-      <div class="articulo">Artículo 21. Aceptación del Marco Legal</div>
-      <p class="texto"><strong>21.1.</strong> Al utilizar el Ecosistema Sariel's, el usuario acepta el presente marco legal en su totalidad.</p>
-      
-      <div class="articulo">Artículo 22. Renuncia de Responsabilidad</div>
-      <p class="texto"><strong>22.1.</strong> La marca Sariel's no es responsable por pérdidas derivadas de la fluctuación del precio del Token TOK.</p>
-      
-      <div class="articulo">Artículo 24. Vigencia</div>
-      <p class="texto">El presente marco legal entra en vigor a partir de su publicación en la plataforma del Ecosistema Sariel's.</p>
-      
-      <!-- FOOTER LEGAL -->
-      <div class="modal-footer-legal">
-        <p>📅 Última actualización: 10 de julio de 2026</p>
-        <p>© 2026 Sariel's Ecosystem — Todos los derechos reservados</p>
-        <p>Versión 2.0 — 81 Artículos · 16 Capítulos · 8 Libros</p>
-        <p style="margin-top:6px; color:#6a5d50;">El Token TOK tiene un valor de redención de <strong style="color:var(--trigo);">$6.25 MXN</strong> por unidad</p>
-      </div>
-      
-    </div>
-    
-    <button class="btn-aceptar-legal" id="btn-aceptar-legal-completo">
-      ✅ Acepto los Términos y Condiciones
-    </button>
+    <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
+    <h2 class="modal-titulo">Términos de Redención del Ecosistema Sariel's</h2>
+    <p class="modal-punto"><strong>Derecho de Redención:</strong> El derecho a obtener un descuento de $75.00 MXN en la adquisición de domos de galleta es una utilidad exclusiva del titular de un NFT Sariel's.</p>
+    <p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios.</p>
+    <p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción está sujeta a una comisión del 1% a favor de la marca.</p>
+    <p class="modal-punto" style="color:#6a5d50; font-size:0.75rem;">Verifica los Términos y Condiciones antes de usar la plataforma.</p>
   </div>
 </div>
 
@@ -910,7 +717,6 @@
 // ================================================================
 // CONFIGURACIÓN
 // ================================================================
-// ⚠️ ACTUALIZA ESTOS DATOS CON LOS TUYOS ⚠️
 const supabaseUrl = 'https://tu-proyecto.supabase.co';
 const supabaseKey = 'tu-clave-publica-anonima';
 
@@ -927,13 +733,7 @@ let datosVelas = [];
 const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
 const COMISION_PORCENTAJE = 0.01;
 
-// VALORES DEL ECOSISTEMA
-const PRECIO_DOMO = 75.00;
-const TOK_POR_COMPRA = 1;
-const TOK_PARA_NFT = 12;
-const VALOR_REDENCION_TOK = PRECIO_DOMO / TOK_PARA_NFT; // = 6.25
-
-// Direcciones de contratos (actualizar con tus direcciones reales)
+// Direcciones de contratos
 const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
 const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
 
@@ -950,9 +750,6 @@ function initSupabase() {
     const { createClient } = supabase;
     supabaseClient = createClient(supabaseUrl, supabaseKey);
     console.log('✅ Supabase inicializado');
-    console.log('📊 Valor de redención del TOK: $' + VALOR_REDENCION_TOK + ' MXN');
-  } else {
-    console.warn('⚠️ Configura supabaseUrl y supabaseKey para conectar a Supabase');
   }
 }
 
@@ -960,85 +757,15 @@ function initSupabase() {
 // CHECKBOXES
 // ================================================================
 document.getElementById('check-aceptar').addEventListener('change', function() {
-  const wrapper = document.getElementById('conexion-check-wrapper');
-  if (this.checked) {
-    wrapper.classList.add('visible');
-  } else {
-    wrapper.classList.remove('visible');
-    document.getElementById('check-conectar').checked = false;
-  }
+  document.getElementById('conexion-check-wrapper').classList.toggle('visible', this.checked);
+  if (!this.checked) document.getElementById('check-conectar').checked = false;
 });
 
-// ================================================================
-// MODAL DE TÉRMINOS COMPLETOS
-// ================================================================
-const modalCompleto = document.getElementById('modal-legal-completo');
-
-// Abrir modal desde el checkbox
 document.getElementById('abrir-legal-desde-check').addEventListener('click', function(e) {
   e.preventDefault();
-  modalCompleto.classList.add('activo');
+  document.getElementById('modal-legal-overlay').classList.add('activo');
 });
 
-// Abrir modal desde el footer
-document.getElementById('btn-abrir-legal').addEventListener('click', function() {
-  modalCompleto.classList.add('activo');
-});
-
-// Cerrar modal
-document.getElementById('modal-legal-cerrar').addEventListener('click', function() {
-  modalCompleto.classList.remove('activo');
-});
-
-// Cerrar al hacer clic fuera
-modalCompleto.addEventListener('click', function(e) {
-  if (e.target === this) {
-    modalCompleto.classList.remove('activo');
-  }
-});
-
-// Botón de aceptar términos
-document.getElementById('btn-aceptar-legal-completo').addEventListener('click', function() {
-  document.getElementById('check-aceptar').checked = true;
-  document.getElementById('check-aceptar').dispatchEvent(new Event('change'));
-  modalCompleto.classList.remove('activo');
-  mostrarNotificacion('✅ Términos aceptados correctamente');
-});
-
-// ================================================================
-// NOTIFICACIONES
-// ================================================================
-function mostrarNotificacion(mensaje) {
-  const notificacion = document.createElement('div');
-  notificacion.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--panel);
-    border: 1px solid var(--trigo);
-    color: var(--texto);
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    z-index: 3000;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-    animation: fadeInUp 0.3s ease;
-    max-width: 90%;
-    text-align: center;
-  `;
-  notificacion.textContent = mensaje;
-  document.body.appendChild(notificacion);
-  setTimeout(() => {
-    notificacion.style.opacity = '0';
-    notificacion.style.transition = 'opacity 0.3s';
-    setTimeout(() => notificacion.remove(), 300);
-  }, 3000);
-}
-
-// ================================================================
-// CONEXIÓN METAMASK
-// ================================================================
 document.getElementById('check-conectar').addEventListener('change', function() {
   if (this.checked) conectarMetaMask();
   else {
@@ -1052,6 +779,22 @@ document.getElementById('check-conectar').addEventListener('change', function() 
   }
 });
 
+// ================================================================
+// MODAL
+// ================================================================
+document.getElementById('btn-abrir-legal').addEventListener('click', () => {
+  document.getElementById('modal-legal-overlay').classList.add('activo');
+});
+document.getElementById('modal-cerrar-btn').addEventListener('click', () => {
+  document.getElementById('modal-legal-overlay').classList.remove('activo');
+});
+document.getElementById('modal-legal-overlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) document.getElementById('modal-legal-overlay').classList.remove('activo');
+});
+
+// ================================================================
+// CONEXIÓN METAMASK
+// ================================================================
 async function conectarMetaMask() {
   if (typeof window.ethereum === 'undefined') {
     alert('No se detectó MetaMask. Instálalo desde metamask.io');
@@ -1095,7 +838,6 @@ async function conectarMetaMask() {
     document.getElementById('estado-conexion').className = 'estado-conexion conectado';
     document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
 
-    // Escuchar cambios
     window.ethereum.on('accountsChanged', (cuentas) => {
       if (cuentas.length > 0) {
         walletConectada = cuentas[0];
@@ -1176,9 +918,10 @@ async function estimarGas() {
 }
 
 // ================================================================
-// GRÁFICO
+// GRÁFICO CON TODAS LAS LÍNEAS (BB + MACD)
 // ================================================================
 function inicializarGrafico() {
+  // Gráfico principal
   chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
     layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
     grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
@@ -1186,6 +929,7 @@ function inicializarGrafico() {
     rightPriceScale: { borderColor: '#1f1a16' },
   });
 
+  // Velas
   seriesVelas = chart.addCandlestickSeries({
     upColor: '#2ecc71',
     downColor: '#e74c3c',
@@ -1196,6 +940,7 @@ function inicializarGrafico() {
     borderVisible: true,
   });
 
+  // Banda Superior (BB)
   seriesBandaSuperior = chart.addLineSeries({
     color: 'rgba(46, 204, 113, 0.3)',
     lineWidth: 1,
@@ -1203,6 +948,7 @@ function inicializarGrafico() {
     priceLineVisible: false,
   });
 
+  // Banda Inferior (BB)
   seriesBandaInferior = chart.addLineSeries({
     color: 'rgba(231, 76, 60, 0.3)',
     lineWidth: 1,
@@ -1210,6 +956,7 @@ function inicializarGrafico() {
     priceLineVisible: false,
   });
 
+  // Media (BB)
   seriesMedia = chart.addLineSeries({
     color: 'rgba(212, 175, 122, 0.4)',
     lineWidth: 1,
@@ -1217,6 +964,7 @@ function inicializarGrafico() {
     priceLineVisible: false,
   });
 
+  // Indicador inferior (MACD)
   chartIndicador = LightweightCharts.createChart(document.getElementById('indicador-container'), {
     layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
     grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
@@ -1224,12 +972,14 @@ function inicializarGrafico() {
     rightPriceScale: { visible: false },
   });
 
+  // MACD Line
   seriesIndicador = chartIndicador.addLineSeries({
     color: '#d4af7a',
     lineWidth: 2,
     crosshairMarkerVisible: false,
   });
 
+  // Señal MACD
   const seriesSignal = chartIndicador.addLineSeries({
     color: '#ff6b6b',
     lineWidth: 1,
@@ -1237,11 +987,13 @@ function inicializarGrafico() {
     crosshairMarkerVisible: false,
   });
 
+  // Histograma MACD
   const seriesHist = chartIndicador.addHistogramSeries({
     color: '#2ecc71',
     priceFormat: { type: 'volume' },
   });
 
+  // Guardar referencias
   window.seriesSignal = seriesSignal;
   window.seriesHist = seriesHist;
 
@@ -1251,8 +1003,10 @@ function inicializarGrafico() {
 }
 
 // ================================================================
-// INDICADORES
+// CÁLCULO DE INDICADORES (BB, MACD, RSI)
 // ================================================================
+
+// Bollinger Bands (20,2)
 function calcularBB(velas, periodo = 20, desviaciones = 2) {
   if (velas.length < periodo) return { superior: [], media: [], inferior: [] };
   
@@ -1273,6 +1027,7 @@ function calcularBB(velas, periodo = 20, desviaciones = 2) {
   return resultado;
 }
 
+// MACD (12,26,9)
 function calcularMACD(velas, fast = 12, slow = 26, signal = 9) {
   if (velas.length < slow + signal) return { macd: [], signal: [], histogram: [] };
   
@@ -1309,30 +1064,33 @@ function calcularEMA(datos, periodo) {
 }
 
 // ================================================================
-// DATOS
+// GENERAR DATOS MOCK
 // ================================================================
 function generarVelasMock(n) {
   const velas = [];
-  let precio = VALOR_REDENCION_TOK; // Inicia en $6.25
+  let precio = 1.36;
   const ahora = Math.floor(Date.now() / 1000);
   const intervalo = 86400;
   for (let i = n; i > 0; i--) {
     const open = precio;
-    const cambio = (Math.random() - 0.48) * 0.3;
-    const close = Math.max(open + cambio, 1);
-    const high = Math.max(open, close) + Math.random() * 0.2;
-    const low = Math.min(open, close) - Math.random() * 0.2;
+    const cambio = (Math.random() - 0.48) * 0.08;
+    const close = open + cambio;
+    const high = Math.max(open, close) + Math.random() * 0.05;
+    const low = Math.min(open, close) - Math.random() * 0.05;
     velas.push({ time: ahora - i * intervalo, open, high, low, close });
     precio = close;
   }
   return velas;
 }
 
+// ================================================================
+// CARGAR DATOS
+// ================================================================
 async function cargarVelasDesdeSupabase(timeframe) {
   if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient
-        .from('tok_velas')
+        .from('velas_tok')
         .select('*')
         .order('time', { ascending: true })
         .limit(100);
@@ -1354,7 +1112,7 @@ async function cargarVelasDesdeSupabase(timeframe) {
 }
 
 // ================================================================
-// RENDERIZAR
+// RENDERIZAR TODO
 // ================================================================
 async function cargarYRenderizarTodo(timeframe) {
   const velas = await cargarVelasDesdeSupabase(timeframe);
@@ -1362,6 +1120,7 @@ async function cargarYRenderizarTodo(timeframe) {
   
   seriesVelas.setData(velas);
 
+  // Calcular Bollinger Bands
   const bb = calcularBB(velas);
   if (bb.superior.length > 0) {
     seriesBandaSuperior.setData(bb.superior);
@@ -1369,6 +1128,7 @@ async function cargarYRenderizarTodo(timeframe) {
     seriesBandaInferior.setData(bb.inferior);
   }
 
+  // Calcular MACD
   const macd = calcularMACD(velas);
   if (macd.macd.length > 0) {
     seriesIndicador.setData(macd.macd);
@@ -1376,6 +1136,7 @@ async function cargarYRenderizarTodo(timeframe) {
     window.seriesHist.setData(macd.histogram);
   }
 
+  // Actualizar información de indicadores
   const ultima = velas[velas.length - 1];
   const anterior = velas[velas.length - 2] || ultima;
   const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
@@ -1387,16 +1148,19 @@ async function cargarYRenderizarTodo(timeframe) {
 
   document.getElementById('input-precio').value = ultima.close.toFixed(4);
 
+  // Actualizar panel de indicadores (como en la imagen)
   if (bb.superior.length > 0) {
     const idx = bb.superior.length - 1;
     document.getElementById('bb-info').textContent = 
       `U:${bb.superior[idx].value.toFixed(2)} M:${bb.media[idx].value.toFixed(2)} L:${bb.inferior[idx].value.toFixed(2)}`;
   }
   
+  // Volumen simulado
   const vol = Math.floor(100000 + Math.random() * 2000000);
   document.getElementById('vol-info').textContent = 
     (vol / 1000000).toFixed(2) + 'M';
   
+  // MACD info
   if (macd.macd.length > 0) {
     const idx = macd.macd.length - 1;
     document.getElementById('macd-info').textContent = 
@@ -1412,14 +1176,14 @@ async function cargarYRenderizarTodo(timeframe) {
 async function cargarOrdenesAbiertas() {
   if (!walletConectada) {
     document.getElementById('contenido-portafolio').innerHTML = 
-      '<p class="vacio-portafolio">🔑 Conecta tu wallet para ver tus órdenes.</p>';
+      '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
     return;
   }
   
   if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient
-        .from('tok_ordenes')
+        .from('ordenes')
         .select('*')
         .eq('wallet', walletConectada.toLowerCase())
         .eq('estado', 'abierta')
@@ -1435,8 +1199,8 @@ async function cargarOrdenesAbiertas() {
   }
   
   const ordenesMock = [
-    { id: '1', tipo: 'compra', cantidad_tok: 150, precio: (VALOR_REDENCION_TOK * 1.1).toFixed(2) },
-    { id: '2', tipo: 'venta', cantidad_tok: 75, precio: (VALOR_REDENCION_TOK * 1.2).toFixed(2) }
+    { id: '1', tipo: 'compra', cantidad_tok: 150, precio: 1.36 },
+    { id: '2', tipo: 'venta', cantidad_tok: 75, precio: 1.42 }
   ];
   renderizarOrdenesAbiertas(ordenesMock);
 }
@@ -1445,13 +1209,13 @@ function renderizarOrdenesAbiertas(ordenes) {
   const contenedor = document.getElementById('contenido-portafolio');
   if (panelPortafolioActivo !== 'ordenes') return;
   if (!ordenes || ordenes.length === 0) {
-    contenedor.innerHTML = '<p class="vacio-portafolio">📭 No tienes órdenes abiertas.</p>';
+    contenedor.innerHTML = '<p class="vacio-portafolio">No tienes órdenes abiertas.</p>';
     return;
   }
   contenedor.innerHTML = ordenes.map(o => `
     <div class="orden-item">
-      <span class="orden-tipo ${o.tipo}">${o.tipo === 'compra' ? '🟢 ↑ Compra' : '🔴 ↓ Venta'} ${o.cantidad_tok} TOK @ $${o.precio || '--'}</span>
-      <button class="btn-cancelar" onclick="cancelarOrden('${o.id}')">✕ Cancelar</button>
+      <span class="orden-tipo ${o.tipo}">${o.tipo === 'compra' ? '↑ Compra' : '↓ Venta'} ${o.cantidad_tok} TOK @ $${o.precio || '--'}</span>
+      <button class="btn-cancelar" onclick="cancelarOrden('${o.id}')">Cancelar</button>
     </div>
   `).join('');
 }
@@ -1465,13 +1229,13 @@ async function cancelarOrden(ordenId) {
   if (supabaseClient) {
     try {
       const { error } = await supabaseClient
-        .from('tok_ordenes')
+        .from('ordenes')
         .update({ estado: 'cancelada' })
         .eq('id', ordenId)
         .eq('wallet', walletConectada.toLowerCase());
       
       if (!error) {
-        mostrarNotificacion('✅ Orden cancelada exitosamente');
+        alert('Orden cancelada exitosamente.');
         await cargarOrdenesAbiertas();
         return;
       }
@@ -1480,21 +1244,21 @@ async function cancelarOrden(ordenId) {
     }
   }
   
-  mostrarNotificacion('🔄 Simulado: orden cancelada');
+  alert('Simulado: orden cancelada.');
   await cargarOrdenesAbiertas();
 }
 
 async function cargarHistorialTransacciones() {
   if (!walletConectada) {
     document.getElementById('contenido-portafolio').innerHTML = 
-      '<p class="vacio-portafolio">🔑 Conecta tu wallet para ver tu historial.</p>';
+      '<p class="vacio-portafolio">Conecta tu wallet para ver tu historial.</p>';
     return;
   }
   
   if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient
-        .from('tok_transacciones')
+        .from('transacciones')
         .select('*')
         .eq('wallet', walletConectada.toLowerCase())
         .order('created_at', { ascending: false })
@@ -1510,8 +1274,8 @@ async function cargarHistorialTransacciones() {
   }
   
   const historialMock = [
-    { id: 'tx1', tipo: 'compra', cantidad_tok: 100, precio: (VALOR_REDENCION_TOK * 1.05).toFixed(2), tx_hash: '0xabc123' },
-    { id: 'tx2', tipo: 'venta', cantidad_tok: 50, precio: (VALOR_REDENCION_TOK * 1.15).toFixed(2), tx_hash: '0xdef456' }
+    { id: 'tx1', tipo: 'compra', cantidad_tok: 100, precio: 1.35, tx_hash: '0xabc123' },
+    { id: 'tx2', tipo: 'venta', cantidad_tok: 50, precio: 1.40, tx_hash: '0xdef456' }
   ];
   renderizarHistorial(historialMock);
 }
@@ -1520,13 +1284,13 @@ function renderizarHistorial(historial) {
   const contenedor = document.getElementById('contenido-portafolio');
   if (panelPortafolioActivo !== 'historial') return;
   if (!historial || historial.length === 0) {
-    contenedor.innerHTML = '<p class="vacio-portafolio">📭 Sin transacciones registradas.</p>';
+    contenedor.innerHTML = '<p class="vacio-portafolio">Sin transacciones registradas.</p>';
     return;
   }
   contenedor.innerHTML = historial.map(tx => `
     <div class="tx-item">
-      <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '🟢 ↑' : '🔴 ↓'} ${tx.cantidad_tok} TOK @ $${tx.precio || '--'}</span>
-      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">🔍 Ver</a>` : ''}
+      <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '↑' : '↓'} ${tx.cantidad_tok} TOK @ $${tx.precio || '--'}</span>
+      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver en explorador</a>` : ''}
     </div>
   `).join('');
 }
@@ -1545,16 +1309,12 @@ async function ejecutarOrden(tipo, cantidad, precio) {
   const totalConComision = total + comision;
   
   const confirmar = confirm(
-    `📊 Confirmar ${tipo.toUpperCase()}:\n` +
-    `━━━━━━━━━━━━━━━━━━━━━━\n` +
-    `📦 Cantidad: ${cantidad} TOK\n` +
-    `💲 Precio: $${precio.toFixed(4)}\n` +
-    `💰 Total: $${total.toFixed(4)}\n` +
-    `📋 Comisión (1%): $${comision.toFixed(4)}\n` +
-    `💳 Total a pagar: $${totalConComision.toFixed(4)}\n` +
-    `━━━━━━━━━━━━━━━━━━━━━━\n` +
-    `💰 Valor de redención del TOK: $${VALOR_REDENCION_TOK.toFixed(2)} MXN\n` +
-    `🪙 ${cantidad} TOK ≈ ${(cantidad * VALOR_REDENCION_TOK).toFixed(2)} MXN en valor de redención`
+    `Confirmar ${tipo}:\n` +
+    `Cantidad: ${cantidad} TOK\n` +
+    `Precio: $${precio.toFixed(4)}\n` +
+    `Total: $${total.toFixed(4)}\n` +
+    `Comisión (1%): $${comision.toFixed(4)}\n` +
+    `Total a pagar: $${totalConComision.toFixed(4)}`
   );
   
   if (!confirmar) return;
@@ -1562,7 +1322,7 @@ async function ejecutarOrden(tipo, cantidad, precio) {
   try {
     if (supabaseClient) {
       const { error } = await supabaseClient
-        .from('tok_transacciones')
+        .from('transacciones')
         .insert([{
           wallet: walletConectada.toLowerCase(),
           tipo: tipo,
@@ -1578,7 +1338,10 @@ async function ejecutarOrden(tipo, cantidad, precio) {
       if (error) throw error;
     }
     
-    mostrarNotificacion(`✅ ${tipo.charAt(0).toUpperCase() + tipo.slice(1)} ejecutada con éxito! ${cantidad} TOK @ $${precio.toFixed(4)}`);
+    alert(`✅ ${tipo} ejecutada con éxito!\n` +
+          `${cantidad} TOK @ $${precio.toFixed(4)}\n` +
+          `Total: $${total.toFixed(4)}\n` +
+          `Comisión: $${comision.toFixed(4)}`);
     
     await actualizarSaldos();
     await cargarOrdenesAbiertas();
@@ -1597,7 +1360,7 @@ document.getElementById('tab-comprar').addEventListener('click', () => {
   document.getElementById('tab-comprar').classList.add('activo');
   document.getElementById('tab-vender').classList.remove('activo');
   const btn = document.getElementById('btn-ejecutar');
-  btn.textContent = '🟢 Ejecutar compra';
+  btn.textContent = 'Ejecutar compra';
   btn.className = 'btn-ejecutar comprar';
 });
 
@@ -1606,7 +1369,7 @@ document.getElementById('tab-vender').addEventListener('click', () => {
   document.getElementById('tab-vender').classList.add('activo');
   document.getElementById('tab-comprar').classList.remove('activo');
   const btn = document.getElementById('btn-ejecutar');
-  btn.textContent = '🔴 Ejecutar venta';
+  btn.textContent = 'Ejecutar venta';
   btn.className = 'btn-ejecutar vender';
 });
 
@@ -1657,11 +1420,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initSupabase();
   inicializarGrafico();
   cargarYRenderizarTodo(timeframeActual);
-  document.getElementById('estado-conexion').innerHTML = 
-    `<span class="dot"></span> ✅ Listo - Conecta MetaMask para operar | Valor de redención: $${VALOR_REDENCION_TOK.toFixed(2)} MXN`;
-  console.log('🚀 Ecosistema Sariel's iniciado');
-  console.log(`📊 Valor de redención del TOK: $${VALOR_REDENCION_TOK.toFixed(2)} MXN`);
-  console.log(`🪙 ${TOK_PARA_NFT} TOK = 1 NFT = 1 Domo gratis ($${PRECIO_DOMO} MXN)`);
+  document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Listo - Conecta MetaMask para operar';
 });
 </script>
 </body>
