@@ -71,12 +71,8 @@
     padding:4px 10px; border-radius:6px; font-size:0.75rem;}
   .tx-link{color:var(--trigo); font-size:0.75rem; text-decoration:underline;}
   .vacio-portafolio{color:#a89882; font-size:0.85rem; text-align:center; padding:10px 0;}
-
-  /* Footer y enlace de aviso legal */
   .footer-legal{text-align:center; padding:20px; margin-top:8px;}
   .link-legal{color:#a89882; font-size:0.8rem; text-decoration:underline; background:none; border:none; cursor:pointer;}
-
-  /* Modal de aviso legal */
   .modal-overlay{
     display:none; position:fixed; top:0; left:0; width:100%; height:100%;
     background:rgba(0,0,0,0.65); z-index:1000;
@@ -186,20 +182,14 @@
 <div class="modal-overlay" id="modal-legal-overlay">
   <div class="modal-caja">
     <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
-    <h2 class="modal-titulo">Términos de Redención de TOK</h2>
-    <p class="modal-punto"><strong>1.</strong> Cada TOK otorga un derecho de redención comercial fijo y garantizado de $5.00 MXN, aplicable exclusivamente como descuento en la compra de domos de galleta de la marca.</p>
-    <p class="modal-punto"><strong>2.</strong> El precio reflejado en el gráfico y el panel de trading es un valor de mercado secundario, determinado de forma libre y exclusiva por la oferta y la demanda entre los propios usuarios del ecosistema.</p>
-    <p class="modal-punto"><strong>3.</strong> El valor de intercambio en el panel puede fluctuar por encima o por debajo del valor de redención comercial, siendo responsabilidad única del usuario las operaciones de compra o venta que decida ejecutar con otros miembros de la comunidad.</p>
+    <h2 class="modal-titulo">Términos de Redención del Ecosistema Sariel's</h2>
+    <p class="modal-punto"><strong>Derecho de Redención:</strong> El derecho a obtener un descuento de $75.00 MXN en la adquisición de domos de galleta es una utilidad exclusiva del titular de un NFT Sariel's.</p>
+    <p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios. La marca no garantiza que el valor del TOK sea equivalente al precio de venta del producto físico.</p>
+    <p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción de compra o venta de tokens realizada a través de la plataforma está sujeta a una comisión del 1% a favor de la marca, destinada al mantenimiento del ecosistema.</p>
   </div>
 </div>
 
 <script>
-/* ============================================================
-   TRADING TOK — Sariel's Ecosystem
-   TODO_API: dirección/ABI del contrato SARIEL_TOK, y del token
-   de pago (USDT/USDC) en Polygon Amoy.
-   ============================================================ */
-
 let modoActual = 'compra';
 let timeframeActual = '1d';
 let chart, seriesVelas, chartIndicador, seriesIndicador;
@@ -208,8 +198,8 @@ let providerEthers = null;
 let panelPortafolioActivo = 'ordenes';
 
 const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
+const COMISION_PORCENTAJE = 0.01; // 1% — usado al calcular totales, ver TODO_API en ejecutarOrden
 
-// ---------- Modal de Aviso Legal ----------
 const modalOverlay = document.getElementById('modal-legal-overlay');
 document.getElementById('btn-abrir-legal').addEventListener('click', () => {
   modalOverlay.classList.add('activo');
@@ -223,7 +213,6 @@ modalOverlay.addEventListener('click', (e) => {
   }
 });
 
-// ---------- Wallet MetaMask ----------
 async function conectarMetaMask() {
   if (typeof window.ethereum === 'undefined') {
     alert('No se detectó MetaMask. Instálalo desde metamask.io o ábrelo en su navegador/app.');
@@ -264,7 +253,6 @@ const ABI_ERC20_MINIMO = [
 
 async function actualizarSaldos() {
   if (!providerEthers) return;
-
   try {
     const balanceNativo = await providerEthers.getBalance(walletConectada);
     document.getElementById('saldo-matic').textContent =
@@ -422,6 +410,8 @@ function renderizarHistorial(historial) {
 }
 
 async function ejecutarOrden(tipo, cantidad, precio) {
+  // TODO_API: al conectar tu backend real, aplica aquí la comisión del 1%
+  // (COMISION_PORCENTAJE) antes de mover fondos, y guarda el registro en tok_ordenes.
   console.log(`TODO_API: ejecutar ${tipo} de ${cantidad} TOK a ${precio}`);
   alert(`Simulado: ${tipo} de ${cantidad} TOK. Conecta ejecutarOrden() a tu API/contrato real.`);
 }
@@ -513,4 +503,4 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
-  </html>
+</html>
