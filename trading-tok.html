@@ -32,7 +32,6 @@
   .timeframes button.activo{background:var(--horno); border-color:var(--horno); color:#fff;}
   .panel-wallet{padding:14px 20px; background:var(--panel); margin:16px 16px 0; border-radius:14px;}
   .btn-wallet{width:100%; padding:12px; background:#f6851b; border:none; border-radius:10px; color:#fff; font-weight:600;}
-  .btn-wallet:disabled{background:#5a4d40; cursor:not-allowed;}
   .wallet-direccion{font-size:0.85rem; color:var(--trigo); word-break:break-all; margin-top:6px;}
   .wallet-balance{font-size:0.9rem; margin-top:4px;}
   .saldos-grid{display:flex; gap:10px; margin-top:8px;}
@@ -55,7 +54,7 @@
   .btn-ejecutar.comprar{background:var(--verde);}
   .btn-ejecutar.vender{background:var(--rojo);}
   .btn-ejecutar:disabled{opacity:0.5;}
-  .estado-conexion{font-size:0.75rem; color:#a89882; padding:10px 20px;}
+  .estado-conexion{font-size:0.75rem; color:#a89882; padding:0 20px 10px;}
   .estado-conexion.conectado{color:var(--verde);}
   .panel-portafolio{margin:16px; background:var(--panel); border-radius:14px; overflow:hidden;}
   .tabs-portafolio{display:flex;}
@@ -72,7 +71,7 @@
     padding:4px 10px; border-radius:6px; font-size:0.75rem;}
   .tx-link{color:var(--trigo); font-size:0.75rem; text-decoration:underline;}
   .vacio-portafolio{color:#a89882; font-size:0.85rem; text-align:center; padding:10px 0;}
-  .footer-legal{text-align:center; padding:20px; display:flex; justify-content:center;
+  .footer-legal{text-align:center; padding:20px; margin-top:8px; display:flex; justify-content:center;
     align-items:center; gap:6px; flex-wrap:wrap;}
   .link-legal{color:#a89882; font-size:0.8rem; text-decoration:underline; background:none; border:none; cursor:pointer;}
   .modal-overlay{
@@ -92,11 +91,139 @@
     cursor:pointer; display:flex; align-items:center; justify-content:center;
   }
   .modal-titulo{font-family:'Fraunces',serif; color:var(--trigo); font-size:1.2rem;
-    margin-bottom:16px;}
+    margin-bottom:16px; padding-right:30px;}
   .modal-punto{margin-bottom:14px; font-size:0.9rem; line-height:1.5; color:var(--texto);}
   .modal-punto strong{color:var(--trigo);}
-  .btn-aceptar-modal{width:100%; padding:12px; background:var(--horno); border:none; 
-    border-radius:10px; color:#fff; font-weight:600; margin-top:10px; cursor:pointer;}
+
+  /* --- SLOGAN --- */
+  .slogan-wrapper{
+    padding:8px 20px 6px 20px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    border-bottom:1px solid #2a221c;
+  }
+  .slogan-icono{
+    flex-shrink:0;
+    width:28px;
+    height:28px;
+    margin-top:2px;
+  }
+  .slogan-texto{
+    font-size:0.75rem;
+    line-height:1.5;
+    color:#c4b8aa;
+    font-style:italic;
+  }
+  .slogan-texto strong{
+    color:var(--trigo);
+    font-style:normal;
+  }
+
+  /* --- Checkbox de aceptación de Términos --- */
+  .aceptacion-check-wrapper{
+    padding:8px 20px 8px 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid #2a221c;
+    background:#1a1512;
+  }
+  .aceptacion-check-wrapper input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    accent-color:#3b82f6;
+    cursor:pointer;
+    flex-shrink:0;
+    appearance:none;
+    -webkit-appearance:none;
+    background:var(--panel);
+    border:2px solid #3a2f26;
+    border-radius:4px;
+    transition:all 0.2s;
+    position:relative;
+  }
+  .aceptacion-check-wrapper input[type="checkbox"]:checked{
+    background:#3b82f6;
+    border-color:#3b82f6;
+  }
+  .aceptacion-check-wrapper input[type="checkbox"]:checked::after{
+    content:"✓";
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+  }
+  .aceptacion-check-wrapper label{
+    font-size:0.78rem;
+    color:#a89882;
+    cursor:pointer;
+  }
+  .aceptacion-check-wrapper label strong{
+    color:var(--trigo);
+    text-decoration:underline;
+    cursor:pointer;
+  }
+  .aceptacion-check-wrapper label strong:hover{
+    color:#c9a876;
+  }
+
+  /* --- Checkbox de MetaMask (se muestra después de aceptar términos) --- */
+  .conexion-check-wrapper{
+    padding:8px 20px 8px 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid #2a221c;
+    background:#1f1915;
+  }
+  .conexion-check-wrapper input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    accent-color:#3b82f6;
+    cursor:pointer;
+    flex-shrink:0;
+    appearance:none;
+    -webkit-appearance:none;
+    background:var(--panel);
+    border:2px solid #3a2f26;
+    border-radius:4px;
+    transition:all 0.2s;
+    position:relative;
+  }
+  .conexion-check-wrapper input[type="checkbox"]:checked{
+    background:#3b82f6;
+    border-color:#3b82f6;
+  }
+  .conexion-check-wrapper input[type="checkbox"]:checked::after{
+    content:"✓";
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+  }
+  .conexion-check-wrapper label{
+    font-size:0.8rem;
+    color:#a89882;
+    cursor:pointer;
+  }
+  .conexion-check-wrapper label strong{
+    color:var(--trigo);
+  }
+
+  /* --- Ocultar conexion-check-wrapper inicialmente --- */
+  .conexion-check-wrapper{
+    display:none;
+  }
+  .conexion-check-wrapper.visible{
+    display:flex;
+  }
 </style>
 </head>
 <body>
@@ -109,7 +236,35 @@
   </div>
 </div>
 
-<div class="estado-conexion" id="estado-conexion">Datos cargados</div>
+<div class="estado-conexion" id="estado-conexion">● Conectando a datos...</div>
+
+<!-- ========== SLOGAN (AHORA ABAJO DEL HEADER) ========== -->
+<div class="slogan-wrapper">
+  <svg class="slogan-icono" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="18" r="16" fill="none" stroke="#3fae6a" stroke-width="2.5"/>
+    <path d="M10 18 L14 22 L26 12" stroke="#3fae6a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="18" cy="18" r="18" fill="none" stroke="#3fae6a" stroke-width="1.5" opacity="0.3"/>
+  </svg>
+  <p class="slogan-texto">
+    <strong>Un estratega conoce el valor de sus activos.</strong> En Sariel's, no te obligamos al consumo: te damos el control. Canjea tus TOKs por galletas de alta calidad o transfiérelos a quien necesite completar su compra. El valor es tuyo, tú decides cómo ejecutarlo.
+  </p>
+</div>
+
+<!-- ========== CHECKBOX: ACEPTAR TÉRMINOS Y CONDICIONES ========== -->
+<div class="aceptacion-check-wrapper">
+  <input type="checkbox" id="check-aceptar">
+  <label for="check-aceptar">
+    He leído y acepto los <strong id="abrir-legal-desde-check">Términos y Condiciones</strong> de Sariel's Ecosystem
+  </label>
+</div>
+
+<!-- ========== CHECKBOX: CONECTAR METAMASK (se muestra tras aceptar términos) ========== -->
+<div class="conexion-check-wrapper" id="conexion-check-wrapper">
+  <input type="checkbox" id="check-conectar">
+  <label for="check-conectar">
+    <strong>Conectar MetaMask</strong>
+  </label>
+</div>
 
 <div class="timeframes">
   <button data-tf="1m">1m</button>
@@ -120,7 +275,7 @@
 <div id="chart-container"></div>
 <div id="indicador-container"></div>
 
-<div class="panel-wallet">
+<div class="panel-wallet" id="panel-wallet">
   <button id="btn-conectar-wallet" class="btn-wallet">🦊 Conectar MetaMask</button>
   <div id="wallet-info" style="display:none;">
     <p class="wallet-direccion" id="wallet-direccion"></p>
@@ -130,11 +285,11 @@
         <div class="valor" id="saldo-tok">--</div>
       </div>
       <div class="saldo-item">
-        <div class="label">USDT</div>
+        <div class="label">USDT (pago)</div>
         <div class="valor" id="saldo-usdt">--</div>
       </div>
       <div class="saldo-item">
-        <div class="label">MATIC</div>
+        <div class="label">MATIC (gas)</div>
         <div class="valor" id="saldo-matic">--</div>
       </div>
     </div>
@@ -146,22 +301,25 @@
     <button class="tab-btn comprar activo" id="tab-comprar">Comprar</button>
     <button class="tab-btn vender" id="tab-vender">Vender</button>
   </div>
+
   <div class="campo">
     <label>Cantidad de TOK</label>
     <input type="number" id="input-cantidad" placeholder="0.00" min="0" step="0.01">
   </div>
   <div class="campo">
-    <label>Precio unitario</label>
+    <label>Precio unitario (referencia)</label>
     <input type="number" id="input-precio" placeholder="0.00" min="0" step="0.0001">
   </div>
   <div class="campo">
     <label>Total estimado</label>
     <input type="text" id="input-total" placeholder="0.00" disabled>
   </div>
+
   <div class="gas-estimado">
     <span>⛽ Costo de gas estimado:</span>
     <span id="gas-estimado-valor">-- MATIC</span>
   </div>
+
   <button class="btn-ejecutar comprar" id="btn-ejecutar">Ejecutar compra</button>
 </div>
 
@@ -176,58 +334,370 @@
 </div>
 
 <div class="footer-legal">
-  <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos</button>
+  <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
+  <span style="color:#5a4d40;">·</span>
+  <a class="link-legal" href="terminos-legales.html" target="_blank">Términos y Condiciones completos</a>
 </div>
 
-<!-- MODAL DE TÉRMINOS -->
 <div class="modal-overlay" id="modal-legal-overlay">
   <div class="modal-caja">
     <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
-    <h2 class="modal-titulo">Términos de Redención</h2>
-    <p class="modal-punto" style="font-style:italic; border-bottom:1px solid #3a2f26; padding-bottom:10px; margin-bottom:15px;">
-      <strong>Un estratega conoce el valor de sus activos.</strong> En Sariel's, no te obligamos al consumo: te damos el control. Canjea tus TOKs por galletas de alta calidad o transfiérelos a quien necesite completar su compra. El valor es tuyo, tú decides cómo administrarlo.
-    </p>
-    <p class="modal-punto"><strong>Derecho de Redención:</strong> 12 TOKs otorgan derecho a un NFT Sariel's.</p>
-    <p class="modal-punto"><strong>Naturaleza del Token:</strong> Activo de intercambio determinado por oferta y demanda.</p>
-    <p class="modal-punto"><strong>Tarifa:</strong> Comisión del 1% por transacción para mantenimiento del ecosistema.</p>
-    <button class="btn-aceptar-modal" id="btn-aceptar-terminos">Aceptar y Conectar</button>
+    <h2 class="modal-titulo">Términos de Redención del Ecosistema Sariel's</h2>
+    <p class="modal-punto"><strong>Derecho de Redención:</strong> El derecho a obtener un descuento de $75.00 MXN en la adquisición de domos de galleta es una utilidad exclusiva del titular de un NFT Sariel's.</p>
+    <p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios. La marca no garantiza que el valor del TOK sea equivalente al precio de venta del producto físico.</p>
+    <p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción de compra o venta de tokens realizada a través de la plataforma está sujeta a una comisión del 1% a favor de la marca, destinada al mantenimiento del ecosistema.</p>
+    <p class="modal-punto"><strong>Verifica los Términos y Condiciones antes de usar la plataforma.</strong></p>
   </div>
 </div>
 
 <script>
 let modoActual = 'compra';
+let timeframeActual = '1d';
+let chart, seriesVelas, chartIndicador, seriesIndicador;
+let walletConectada = null;
 let providerEthers = null;
-const modalOverlay = document.getElementById('modal-legal-overlay');
+let panelPortafolioActivo = 'ordenes';
 
-document.getElementById('btn-conectar-wallet').addEventListener('click', () => {
+const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
+const COMISION_PORCENTAJE = 0.01;
+
+// ========== ACEPTAR TÉRMINOS → MUESTRA CHECKBOX DE CONEXIÓN ==========
+document.getElementById('check-aceptar').addEventListener('change', function() {
+  const conexionWrapper = document.getElementById('conexion-check-wrapper');
+  if (this.checked) {
+    conexionWrapper.classList.add('visible');
+  } else {
+    conexionWrapper.classList.remove('visible');
+    // Si desmarca términos, también desmarca y desconecta MetaMask
+    document.getElementById('check-conectar').checked = false;
+  }
+});
+
+// ========== ABRIR MODAL DESDE EL CHECKBOX ==========
+document.getElementById('abrir-legal-desde-check').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('modal-legal-overlay').classList.add('activo');
+});
+
+// ========== CHECKBOX: Conectar MetaMask ==========
+document.getElementById('check-conectar').addEventListener('change', function() {
+  if (this.checked) {
+    conectarMetaMask();
+  } else {
+    // Si se desmarca, desconectar
+    walletConectada = null;
+    providerEthers = null;
+    document.getElementById('btn-conectar-wallet').style.display = 'block';
+    document.getElementById('wallet-info').style.display = 'none';
+    document.getElementById('estado-conexion').textContent = '● Desconectado';
+    document.getElementById('estado-conexion').classList.remove('conectado');
+    document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
+  }
+});
+
+// ========== MODAL DE TÉRMINOS ==========
+const modalOverlay = document.getElementById('modal-legal-overlay');
+document.getElementById('btn-abrir-legal').addEventListener('click', () => {
   modalOverlay.classList.add('activo');
 });
-
-document.getElementById('btn-aceptar-terminos').addEventListener('click', () => {
-  modalOverlay.classList.remove('activo');
-  conectarMetaMask();
-});
-
 document.getElementById('modal-cerrar-btn').addEventListener('click', () => {
   modalOverlay.classList.remove('activo');
+});
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) modalOverlay.classList.remove('activo');
 });
 
 async function conectarMetaMask() {
   if (typeof window.ethereum === 'undefined') {
-    alert('MetaMask no detectado.');
+    alert('No se detectó MetaMask. Instálalo desde metamask.io o ábrelo en su navegador/app.');
+    document.getElementById('check-conectar').checked = false;
     return;
   }
   try {
     const cuentas = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    walletConectada = cuentas[0];
+
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x13882' }]
+    });
+
     providerEthers = new ethers.providers.Web3Provider(window.ethereum);
+
     document.getElementById('btn-conectar-wallet').style.display = 'none';
     document.getElementById('wallet-info').style.display = 'block';
-    document.getElementById('wallet-direccion').textContent = cuentas[0].slice(0, 6) + '...' + cuentas[0].slice(-4);
+    document.getElementById('wallet-direccion').textContent =
+      walletConectada.slice(0, 6) + '...' + walletConectada.slice(-4);
+
+    await actualizarSaldos();
+    await cargarOrdenesAbiertas();
+    document.getElementById('check-conectar').checked = true;
+    document.getElementById('estado-conexion').textContent = '● Conectado a Polygon Amoy';
+    document.getElementById('estado-conexion').classList.add('conectado');
+
   } catch (err) {
-    alert('Conexión cancelada.');
+    console.error(err);
+    alert('No se pudo conectar la wallet. Intenta de nuevo.');
+    document.getElementById('check-conectar').checked = false;
   }
 }
-// ... resto de funciones existentes (inicializarGrafico, etc.)
+
+const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
+const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
+const ABI_ERC20_MINIMO = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+  "function transfer(address to, uint256 amount) returns (bool)"
+];
+
+async function actualizarSaldos() {
+  if (!providerEthers) return;
+  try {
+    const balanceNativo = await providerEthers.getBalance(walletConectada);
+    document.getElementById('saldo-matic').textContent =
+      parseFloat(ethers.utils.formatEther(balanceNativo)).toFixed(4);
+  } catch (err) {
+    document.getElementById('saldo-matic').textContent = 'Error';
+  }
+
+  if (DIRECCION_CONTRATO_TOK !== "0x0000000000000000000000000000000000000000") {
+    try {
+      const contratoTok = new ethers.Contract(DIRECCION_CONTRATO_TOK, ABI_ERC20_MINIMO, providerEthers);
+      const balance = await contratoTok.balanceOf(walletConectada);
+      document.getElementById('saldo-tok').textContent =
+        parseFloat(ethers.utils.formatUnits(balance, 18)).toFixed(2);
+    } catch (err) {
+      document.getElementById('saldo-tok').textContent = 'Error';
+    }
+  } else {
+    document.getElementById('saldo-tok').textContent = 'Sin conectar';
+  }
+
+  if (DIRECCION_CONTRATO_PAGO !== "0x0000000000000000000000000000000000000000") {
+    try {
+      const contratoPago = new ethers.Contract(DIRECCION_CONTRATO_PAGO, ABI_ERC20_MINIMO, providerEthers);
+      const balance = await contratoPago.balanceOf(walletConectada);
+      document.getElementById('saldo-usdt').textContent =
+        parseFloat(ethers.utils.formatUnits(balance, 6)).toFixed(2);
+    } catch (err) {
+      document.getElementById('saldo-usdt').textContent = 'Error';
+    }
+  } else {
+    document.getElementById('saldo-usdt').textContent = 'Sin conectar';
+  }
+}
+
+async function estimarGas() {
+  if (!providerEthers) {
+    document.getElementById('gas-estimado-valor').textContent = 'Conecta tu wallet primero';
+    return;
+  }
+  try {
+    const gasPrice = await providerEthers.getGasPrice();
+    const gasLimiteAproximado = ethers.BigNumber.from("65000");
+    const costoTotal = gasPrice.mul(gasLimiteAproximado);
+    document.getElementById('gas-estimado-valor').textContent =
+      parseFloat(ethers.utils.formatEther(costoTotal)).toFixed(6) + ' MATIC';
+  } catch (err) {
+    console.error(err);
+    document.getElementById('gas-estimado-valor').textContent = 'No se pudo estimar';
+  }
+}
+
+function inicializarGrafico() {
+  chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
+    layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
+    grid: { vertLines: { color: '#241d18' }, horzLines: { color: '#241d18' } },
+    timeScale: { borderColor: '#3a2f26' },
+    rightPriceScale: { borderColor: '#3a2f26' },
+  });
+  seriesVelas = chart.addCandlestickSeries({
+    upColor: '#3fae6a', downColor: '#e0483e',
+    borderVisible: false,
+    wickUpColor: '#3fae6a', wickDownColor: '#e0483e',
+  });
+
+  chartIndicador = LightweightCharts.createChart(document.getElementById('indicador-container'), {
+    layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
+    grid: { vertLines: { color: '#241d18' }, horzLines: { color: '#241d18' } },
+    timeScale: { visible: false },
+  });
+  seriesIndicador = chartIndicador.addLineSeries({ color: '#c9a876', lineWidth: 2 });
+
+  chart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+    chartIndicador.timeScale().setVisibleLogicalRange(range);
+  });
+}
+
+async function cargarVelasDesdeSupabase(timeframe) {
+  return generarVelasMock(60);
+}
+
+function generarVelasMock(n) {
+  const velas = [];
+  let precio = 6.30;
+  const ahora = Math.floor(Date.now() / 1000);
+  for (let i = n; i > 0; i--) {
+    const open = precio;
+    const close = open + (Math.random() - 0.5) * 0.15;
+    const high = Math.max(open, close) + Math.random() * 0.05;
+    const low = Math.min(open, close) - Math.random() * 0.05;
+    velas.push({ time: ahora - i * 86400, open, high, low, close });
+    precio = close;
+  }
+  return velas;
+}
+
+function calcularIndicadorRSL(velas, periodo = 14) {
+  const resultado = [];
+  for (let i = periodo; i < velas.length; i++) {
+    const promedio = velas.slice(i - periodo, i).reduce((s, v) => s + v.close, 0) / periodo;
+    const rsl = (velas[i].close - promedio) / promedio;
+    resultado.push({ time: velas[i].time, value: rsl });
+  }
+  return resultado;
+}
+
+function suscribirsePreciosTiempoReal() {
+  document.getElementById('estado-conexion').textContent = '● Datos simulados (conecta tu API)';
+}
+
+async function cargarOrdenesAbiertas() {
+  const ordenesMock = [];
+  renderizarOrdenesAbiertas(ordenesMock);
+}
+
+function renderizarOrdenesAbiertas(ordenes) {
+  const contenedor = document.getElementById('contenido-portafolio');
+  if (panelPortafolioActivo !== 'ordenes') return;
+  if (ordenes.length === 0) {
+    contenedor.innerHTML = '<p class="vacio-portafolio">No tienes órdenes abiertas.</p>';
+    return;
+  }
+  contenedor.innerHTML = ordenes.map(o => `
+    <div class="orden-item">
+      <span class="orden-tipo ${o.tipo}">${o.tipo === 'compra' ? '↑ Compra' : '↓ Venta'} ${o.cantidad_tok} TOK</span>
+      <button class="btn-cancelar" onclick="cancelarOrden('${o.id}')">Cancelar</button>
+    </div>
+  `).join('');
+}
+
+async function cancelarOrden(ordenId) {
+  console.log('TODO_API: cancelar orden', ordenId);
+  alert('Simulado: orden cancelada. Conecta cancelarOrden() a tu tabla real.');
+  await cargarOrdenesAbiertas();
+}
+
+async function cargarHistorialTransacciones() {
+  const historialMock = [];
+  renderizarHistorial(historialMock);
+}
+
+function renderizarHistorial(historial) {
+  const contenedor = document.getElementById('contenido-portafolio');
+  if (panelPortafolioActivo !== 'historial') return;
+  if (historial.length === 0) {
+    contenedor.innerHTML = '<p class="vacio-portafolio">Sin transacciones registradas todavía.</p>';
+    return;
+  }
+  contenedor.innerHTML = historial.map(tx => `
+    <div class="tx-item">
+      <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '↑' : '↓'} ${tx.cantidad_tok} TOK</span>
+      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver en explorador</a>` : ''}
+    </div>
+  `).join('');
+}
+
+async function ejecutarOrden(tipo, cantidad, precio) {
+  console.log(`TODO_API: ejecutar ${tipo} de ${cantidad} TOK a ${precio}`);
+  alert(`Simulado: ${tipo} de ${cantidad} TOK. Conecta ejecutarOrden() a tu API/contrato real.`);
+}
+
+async function cargarYRenderizarTodo(timeframe) {
+  const velas = await cargarVelasDesdeSupabase(timeframe);
+  seriesVelas.setData(velas);
+
+  const indicador = calcularIndicadorRSL(velas);
+  seriesIndicador.setData(indicador);
+
+  const ultima = velas[velas.length - 1];
+  const anterior = velas[velas.length - 2];
+  const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
+
+  document.getElementById('precio-actual').textContent = ultima.close.toFixed(4);
+  const elCambio = document.getElementById('cambio-pct');
+  elCambio.textContent = `${cambio >= 0 ? '+' : ''}${cambio.toFixed(2)}%`;
+  elCambio.className = 'cambio-pct ' + (cambio >= 0 ? 'up' : 'down');
+
+  document.getElementById('input-precio').value = ultima.close.toFixed(4);
+  document.getElementById('estado-conexion').classList.add('conectado');
+
+  chart.timeScale().fitContent();
+}
+
+document.getElementById('tab-comprar').addEventListener('click', () => {
+  modoActual = 'compra';
+  document.getElementById('tab-comprar').classList.add('activo');
+  document.getElementById('tab-vender').classList.remove('activo');
+  const btn = document.getElementById('btn-ejecutar');
+  btn.textContent = 'Ejecutar compra';
+  btn.className = 'btn-ejecutar comprar';
+});
+
+document.getElementById('tab-vender').addEventListener('click', () => {
+  modoActual = 'venta';
+  document.getElementById('tab-vender').classList.add('activo');
+  document.getElementById('tab-comprar').classList.remove('activo');
+  const btn = document.getElementById('btn-ejecutar');
+  btn.textContent = 'Ejecutar venta';
+  btn.className = 'btn-ejecutar vender';
+});
+
+function actualizarTotal() {
+  const cantidad = parseFloat(document.getElementById('input-cantidad').value) || 0;
+  const precio = parseFloat(document.getElementById('input-precio').value) || 0;
+  document.getElementById('input-total').value = (cantidad * precio).toFixed(4);
+  estimarGas();
+}
+document.getElementById('input-cantidad').addEventListener('input', actualizarTotal);
+document.getElementById('input-precio').addEventListener('input', actualizarTotal);
+
+document.getElementById('btn-ejecutar').addEventListener('click', () => {
+  const cantidad = parseFloat(document.getElementById('input-cantidad').value);
+  const precio = parseFloat(document.getElementById('input-precio').value);
+  if (!cantidad || cantidad <= 0) { alert('Ingresa una cantidad válida'); return; }
+  ejecutarOrden(modoActual, cantidad, precio);
+});
+
+document.querySelectorAll('.timeframes button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timeframes button').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    timeframeActual = btn.dataset.tf;
+    cargarYRenderizarTodo(timeframeActual);
+  });
+});
+
+document.querySelectorAll('.tab-portafolio').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-portafolio').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    panelPortafolioActivo = btn.dataset.panel;
+    if (panelPortafolioActivo === 'ordenes') {
+      cargarOrdenesAbiertas();
+    } else {
+      cargarHistorialTransacciones();
+    }
+  });
+});
+
+document.getElementById('btn-conectar-wallet').addEventListener('click', conectarMetaMask);
+
+window.addEventListener('DOMContentLoaded', () => {
+  inicializarGrafico();
+  cargarYRenderizarTodo(timeframeActual);
+  suscribirsePreciosTiempoReal();
+});
 </script>
 </body>
-</html>
+  </html>
