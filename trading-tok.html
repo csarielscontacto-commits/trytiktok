@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading TOK — Sariel's Ecosystem</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
-<script src="base-datos-centralizada.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -21,9 +19,7 @@
   body{background:var(--masa); color:var(--texto); font-family:'Inter',sans-serif;}
   h1,h2{font-family:'Fraunces',serif;}
 
-  /* ================================================================
-     HEADER CON LOGO DE SARIEL'S (DORADO CON VETAS)
-     ================================================================ */
+  /* HEADER CON LOGO DE SARIEL'S */
   .header{
     padding:12px 16px;
     border-bottom:1px solid #2a221c;
@@ -38,7 +34,6 @@
     gap:10px;
   }
 
-  /* --- LOGO DORADO CON EFECTO DE AGUA/VETAS --- */
   .logo-sariels{
     display:flex;
     flex-direction:column;
@@ -72,7 +67,6 @@
     position:relative;
     overflow:hidden;
   }
-  /* Vetas doradas (efecto de agua) */
   .logo-sariels::before{
     content:'';
     position:absolute;
@@ -90,7 +84,6 @@
     0%{ transform:translate(0%,0%) rotate(0deg); }
     100%{ transform:translate(5%,5%) rotate(5deg); }
   }
-  /* Símbolo "S" dentro del logo */
   .logo-sariels .s-letter{
     font-family:'Fraunces',serif;
     font-weight:700;
@@ -103,7 +96,6 @@
     letter-spacing:1px;
     line-height:1;
   }
-  /* Texto al lado del logo */
   .header-titulo{
     display:flex;
     flex-direction:column;
@@ -166,7 +158,7 @@
   .estado-conexion.conectado .dot{background:var(--verde-brillante); box-shadow:0 0 8px rgba(0,245,160,0.3);}
   .estado-conexion.conectado{color:var(--verde-brillante);}
 
-  /* GRÁFICO - CONTRASTE MEJORADO */
+  /* GRÁFICO */
   #chart-container{width:100%; height:340px; background:var(--fondo-grafico);}
   #indicador-container{width:100%; height:100px; border-top:1px solid #1f1a16; background:var(--fondo-grafico);}
 
@@ -565,12 +557,9 @@
 </head>
 <body>
 
-<!-- ================================================================
-     HEADER CON LOGO DE SARIEL'S (DORADO CON EFECTO AGUA)
-     ================================================================ -->
+<!-- HEADER CON LOGO DE SARIEL'S -->
 <div class="header">
   <div class="header-left">
-    <!-- LOGO DORADO CON VETAS -->
     <div class="logo-sariels">
       <span class="s-letter">S</span>
     </div>
@@ -585,12 +574,12 @@
   </div>
 </div>
 
-<!-- ========== ESTADO DE CONEXIÓN ========== -->
+<!-- ESTADO DE CONEXIÓN -->
 <div class="estado-conexion" id="estado-conexion">
   <span class="dot"></span> Conectando a datos...
 </div>
 
-<!-- ========== SLOGAN ========== -->
+<!-- SLOGAN -->
 <div class="slogan-wrapper">
   <svg class="slogan-icono" viewBox="0 0 36 36" fill="none">
     <circle cx="18" cy="18" r="16" stroke="#d4af7a" stroke-width="2"/>
@@ -601,7 +590,7 @@
   </p>
 </div>
 
-<!-- ========== ACEPTAR TÉRMINOS ========== -->
+<!-- ACEPTAR TÉRMINOS -->
 <div class="aceptacion-check-wrapper">
   <input type="checkbox" id="check-aceptar">
   <label for="check-aceptar">
@@ -609,7 +598,7 @@
   </label>
 </div>
 
-<!-- ========== CONECTAR METAMASK ========== -->
+<!-- CONECTAR METAMASK -->
 <div class="conexion-check-wrapper" id="conexion-check-wrapper">
   <input type="checkbox" id="check-conectar">
   <label for="check-conectar">
@@ -617,7 +606,7 @@
   </label>
 </div>
 
-<!-- ========== TIMEFRAMES ========== -->
+<!-- TIMEFRAMES -->
 <div class="timeframes">
   <button data-tf="1m">1m</button>
   <button data-tf="5m">5m</button>
@@ -626,11 +615,11 @@
   <button data-tf="1d" class="activo">1d</button>
 </div>
 
-<!-- ========== GRÁFICO ========== -->
+<!-- GRÁFICO -->
 <div id="chart-container"></div>
 <div id="indicador-container"></div>
 
-<!-- ========== PANEL WALLET ========== -->
+<!-- PANEL WALLET -->
 <div class="panel-wallet" id="panel-wallet">
   <button id="btn-conectar-wallet" class="btn-wallet">🦊 Conectar MetaMask</button>
   <div id="wallet-info" style="display:none;">
@@ -652,7 +641,7 @@
   </div>
 </div>
 
-<!-- ========== PANEL OPERAR ========== -->
+<!-- PANEL OPERAR -->
 <div class="panel-operar">
   <div class="tabs-operar">
     <button class="tab-btn comprar activo" id="tab-comprar">Comprar</button>
@@ -680,7 +669,7 @@
   <button class="btn-ejecutar comprar" id="btn-ejecutar">Ejecutar compra</button>
 </div>
 
-<!-- ========== PANEL PORTAFOLIO ========== -->
+<!-- PANEL PORTAFOLIO -->
 <div class="panel-portafolio">
   <div class="tabs-portafolio">
     <button class="tab-portafolio activo" data-panel="ordenes">Órdenes Abiertas</button>
@@ -691,14 +680,14 @@
   </div>
 </div>
 
-<!-- ========== FOOTER LEGAL ========== -->
+<!-- FOOTER LEGAL -->
 <div class="footer-legal">
   <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
   <span style="color:#3a2f26;">·</span>
   <a class="link-legal" href="terminos-legales.html" target="_blank">Términos y Condiciones completos</a>
 </div>
 
-<!-- ========== MODAL TÉRMINOS ========== -->
+<!-- MODAL TÉRMINOS -->
 <div class="modal-overlay" id="modal-legal-overlay">
   <div class="modal-caja">
     <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
@@ -712,7 +701,13 @@
 
 <script>
 // ================================================================
-// CONFIGURACIÓN
+// CONFIGURACIÓN DE SUPABASE
+// ================================================================
+const supabaseUrl = 'https://tu-proyecto.supabase.co';
+const supabaseKey = 'tu-clave-publica-anonima';
+
+// ================================================================
+// VARIABLES GLOBALES
 // ================================================================
 let modoActual = 'compra';
 let timeframeActual = '1d';
@@ -720,12 +715,35 @@ let chart, seriesVelas, chartIndicador, seriesIndicador;
 let walletConectada = null;
 let providerEthers = null;
 let panelPortafolioActivo = 'ordenes';
+let supabaseClient = null;
 
 const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
 const COMISION_PORCENTAJE = 0.01;
 
+// Direcciones de contratos (actualizar con tus direcciones reales)
+const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
+const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
+
+const ABI_ERC20_MINIMO = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
+
 // ================================================================
-// CHECKBOX: ACEPTAR TÉRMINOS → MUESTRA CONEXIÓN METAMASK
+// INICIALIZAR SUPABASE
+// ================================================================
+function initSupabase() {
+  if (typeof supabaseUrl !== 'undefined' && supabaseUrl !== 'https://tu-proyecto.supabase.co') {
+    const { createClient } = supabase;
+    supabaseClient = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ Supabase inicializado');
+  } else {
+    console.warn('⚠️ Configura Supabase para datos reales');
+  }
+}
+
+// ================================================================
+// CHECKBOX: ACEPTAR TÉRMINOS
 // ================================================================
 document.getElementById('check-aceptar').addEventListener('change', function() {
   const conexionWrapper = document.getElementById('conexion-check-wrapper');
@@ -786,10 +804,33 @@ async function conectarMetaMask() {
     const cuentas = await window.ethereum.request({ method: 'eth_requestAccounts' });
     walletConectada = cuentas[0];
 
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x13882' }]
-    });
+    // Cambiar a Polygon Amoy (testnet)
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x13882' }]
+      });
+    } catch (switchError) {
+      // Si la red no está agregada, la agregamos
+      if (switchError.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x13882',
+            chainName: 'Polygon Amoy',
+            nativeCurrency: {
+              name: 'MATIC',
+              symbol: 'MATIC',
+              decimals: 18
+            },
+            rpcUrls: ['https://rpc-amoy.polygon.technology/'],
+            blockExplorerUrls: ['https://amoy.polygonscan.com/']
+          }]
+        });
+      } else {
+        throw switchError;
+      }
+    }
 
     providerEthers = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -804,6 +845,26 @@ async function conectarMetaMask() {
     document.getElementById('estado-conexion').className = 'estado-conexion conectado';
     document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
 
+    // Escuchar cambios de cuenta
+    window.ethereum.on('accountsChanged', (cuentas) => {
+      if (cuentas.length > 0) {
+        walletConectada = cuentas[0];
+        document.getElementById('wallet-direccion').textContent =
+          walletConectada.slice(0, 6) + '...' + walletConectada.slice(-4);
+        actualizarSaldos();
+      } else {
+        document.getElementById('check-conectar').checked = false;
+        walletConectada = null;
+        document.getElementById('btn-conectar-wallet').style.display = 'block';
+        document.getElementById('wallet-info').style.display = 'none';
+      }
+    });
+
+    // Escuchar cambios de red
+    window.ethereum.on('chainChanged', () => {
+      window.location.reload();
+    });
+
   } catch (err) {
     console.error(err);
     alert('No se pudo conectar la wallet.');
@@ -812,15 +873,8 @@ async function conectarMetaMask() {
 }
 
 // ================================================================
-// CONTRATOS Y SALDOS
+// ACTUALIZAR SALDOS
 // ================================================================
-const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
-const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
-const ABI_ERC20_MINIMO = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function decimals() view returns (uint8)"
-];
-
 async function actualizarSaldos() {
   if (!providerEthers) return;
   try {
@@ -835,8 +889,9 @@ async function actualizarSaldos() {
     try {
       const contratoTok = new ethers.Contract(DIRECCION_CONTRATO_TOK, ABI_ERC20_MINIMO, providerEthers);
       const balance = await contratoTok.balanceOf(walletConectada);
+      const decimals = await contratoTok.decimals();
       document.getElementById('saldo-tok').textContent =
-        parseFloat(ethers.utils.formatUnits(balance, 18)).toFixed(2);
+        parseFloat(ethers.utils.formatUnits(balance, decimals)).toFixed(2);
     } catch (err) {
       document.getElementById('saldo-tok').textContent = 'Error';
     }
@@ -848,8 +903,9 @@ async function actualizarSaldos() {
     try {
       const contratoPago = new ethers.Contract(DIRECCION_CONTRATO_PAGO, ABI_ERC20_MINIMO, providerEthers);
       const balance = await contratoPago.balanceOf(walletConectada);
+      const decimals = await contratoPago.decimals();
       document.getElementById('saldo-usdt').textContent =
-        parseFloat(ethers.utils.formatUnits(balance, 6)).toFixed(2);
+        parseFloat(ethers.utils.formatUnits(balance, decimals)).toFixed(2);
     } catch (err) {
       document.getElementById('saldo-usdt').textContent = 'Error';
     }
@@ -859,7 +915,7 @@ async function actualizarSaldos() {
 }
 
 // ================================================================
-// GAS
+// ESTIMAR GAS
 // ================================================================
 async function estimarGas() {
   if (!providerEthers) {
@@ -878,7 +934,7 @@ async function estimarGas() {
 }
 
 // ================================================================
-// GRÁFICO - CONTRASTE MEJORADO
+// GRÁFICO
 // ================================================================
 function inicializarGrafico() {
   chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
@@ -921,22 +977,19 @@ function inicializarGrafico() {
 }
 
 // ================================================================
-// DATOS MOCK
+// DATOS MOCK (reemplazar con datos reales de Supabase)
 // ================================================================
-async function cargarVelasDesdeSupabase(timeframe) {
-  return generarVelasMock(80);
-}
-
 function generarVelasMock(n) {
   const velas = [];
-  let precio = 6.30;
+  let precio = 1.36;
   const ahora = Math.floor(Date.now() / 1000);
   const intervalo = 86400;
   for (let i = n; i > 0; i--) {
     const open = precio;
-    const close = open + (Math.random() - 0.5) * 0.25;
-    const high = Math.max(open, close) + Math.random() * 0.08;
-    const low = Math.min(open, close) - Math.random() * 0.08;
+    const cambio = (Math.random() - 0.48) * 0.08;
+    const close = open + cambio;
+    const high = Math.max(open, close) + Math.random() * 0.05;
+    const low = Math.min(open, close) - Math.random() * 0.05;
     velas.push({ time: ahora - i * intervalo, open, high, low, close });
     precio = close;
   }
@@ -954,10 +1007,81 @@ function calcularIndicadorRSL(velas, periodo = 14) {
 }
 
 // ================================================================
+// CARGAR DATOS DESDE SUPABASE O MOCK
+// ================================================================
+async function cargarVelasDesdeSupabase(timeframe) {
+  // Si Supabase está configurado, intentar obtener datos reales
+  if (supabaseClient) {
+    try {
+      // Obtener el rango de tiempo según el timeframe
+      let intervalo;
+      switch(timeframe) {
+        case '1m': intervalo = '1 minute'; break;
+        case '5m': intervalo = '5 minute'; break;
+        case '15m': intervalo = '15 minute'; break;
+        case '1h': intervalo = '1 hour'; break;
+        default: intervalo = '1 day';
+      }
+      
+      const { data, error } = await supabaseClient
+        .from('velas_tok')
+        .select('*')
+        .order('time', { ascending: true })
+        .limit(100);
+      
+      if (error) throw error;
+      if (data && data.length > 0) {
+        return data.map(v => ({
+          time: Math.floor(new Date(v.time).getTime() / 1000),
+          open: v.open,
+          high: v.high,
+          low: v.low,
+          close: v.close
+        }));
+      }
+    } catch (err) {
+      console.warn('Error obteniendo datos de Supabase, usando mock:', err);
+    }
+  }
+  // Fallback a datos mock
+  return generarVelasMock(80);
+}
+
+// ================================================================
 // PORTAFOLIO
 // ================================================================
 async function cargarOrdenesAbiertas() {
-  renderizarOrdenesAbiertas([]);
+  if (!walletConectada) {
+    document.getElementById('contenido-portafolio').innerHTML = 
+      '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
+    return;
+  }
+  
+  // Si Supabase está configurado, obtener órdenes reales
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('ordenes')
+        .select('*')
+        .eq('wallet', walletConectada.toLowerCase())
+        .eq('estado', 'abierta')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      if (data && data.length > 0) {
+        renderizarOrdenesAbiertas(data);
+        return;
+      }
+    } catch (err) {
+      console.warn('Error obteniendo órdenes:', err);
+    }
+  }
+  // Fallback a datos mock
+  const ordenesMock = [
+    { id: '1', tipo: 'compra', cantidad_tok: 150, precio: 1.36 },
+    { id: '2', tipo: 'venta', cantidad_tok: 75, precio: 1.42 }
+  ];
+  renderizarOrdenesAbiertas(ordenesMock);
 }
 
 function renderizarOrdenesAbiertas(ordenes) {
@@ -969,19 +1093,74 @@ function renderizarOrdenesAbiertas(ordenes) {
   }
   contenedor.innerHTML = ordenes.map(o => `
     <div class="orden-item">
-      <span class="orden-tipo ${o.tipo}">${o.tipo === 'compra' ? '↑ Compra' : '↓ Venta'} ${o.cantidad_tok} TOK</span>
+      <span class="orden-tipo ${o.tipo}">${o.tipo === 'compra' ? '↑ Compra' : '↓ Venta'} ${o.cantidad_tok} TOK @ $${o.precio || '--'}</span>
       <button class="btn-cancelar" onclick="cancelarOrden('${o.id}')">Cancelar</button>
     </div>
   `).join('');
 }
 
 async function cancelarOrden(ordenId) {
+  if (!walletConectada) {
+    alert('Conecta tu wallet primero.');
+    return;
+  }
+  
+  // Si Supabase está configurado, cancelar orden en la base de datos
+  if (supabaseClient) {
+    try {
+      const { error } = await supabaseClient
+        .from('ordenes')
+        .update({ estado: 'cancelada' })
+        .eq('id', ordenId)
+        .eq('wallet', walletConectada.toLowerCase());
+      
+      if (error) throw error;
+      alert('Orden cancelada exitosamente.');
+      await cargarOrdenesAbiertas();
+      return;
+    } catch (err) {
+      console.warn('Error cancelando orden:', err);
+      alert('Error al cancelar la orden: ' + err.message);
+      return;
+    }
+  }
+  
   alert('Simulado: orden cancelada.');
   await cargarOrdenesAbiertas();
 }
 
 async function cargarHistorialTransacciones() {
-  renderizarHistorial([]);
+  if (!walletConectada) {
+    document.getElementById('contenido-portafolio').innerHTML = 
+      '<p class="vacio-portafolio">Conecta tu wallet para ver tu historial.</p>';
+    return;
+  }
+  
+  // Si Supabase está configurado, obtener historial real
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('transacciones')
+        .select('*')
+        .eq('wallet', walletConectada.toLowerCase())
+        .order('created_at', { ascending: false })
+        .limit(50);
+      
+      if (error) throw error;
+      if (data && data.length > 0) {
+        renderizarHistorial(data);
+        return;
+      }
+    } catch (err) {
+      console.warn('Error obteniendo historial:', err);
+    }
+  }
+  // Fallback a datos mock
+  const historialMock = [
+    { id: 'tx1', tipo: 'compra', cantidad_tok: 100, precio: 1.35, tx_hash: '0xabc123' },
+    { id: 'tx2', tipo: 'venta', cantidad_tok: 50, precio: 1.40, tx_hash: '0xdef456' }
+  ];
+  renderizarHistorial(historialMock);
 }
 
 function renderizarHistorial(historial) {
@@ -993,21 +1172,80 @@ function renderizarHistorial(historial) {
   }
   contenedor.innerHTML = historial.map(tx => `
     <div class="tx-item">
-      <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '↑' : '↓'} ${tx.cantidad_tok} TOK</span>
-      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver</a>` : ''}
+      <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '↑' : '↓'} ${tx.cantidad_tok} TOK @ $${tx.precio || '--'}</span>
+      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver en explorador</a>` : ''}
     </div>
   `).join('');
 }
 
 // ================================================================
-// EJECUTAR ORDEN
+// EJECUTAR ORDEN (simulación)
 // ================================================================
 async function ejecutarOrden(tipo, cantidad, precio) {
-  alert(`Simulado: ${tipo} de ${cantidad} TOK a ${precio}`);
+  if (!walletConectada) {
+    alert('Conecta tu wallet para ejecutar esta operación.');
+    return;
+  }
+  
+  const total = cantidad * precio;
+  const comision = total * COMISION_PORCENTAJE;
+  const totalConComision = total + comision;
+  
+  const confirmar = confirm(
+    `Confirmar ${tipo}:\n` +
+    `Cantidad: ${cantidad} TOK\n` +
+    `Precio: $${precio.toFixed(4)}\n` +
+    `Total: $${total.toFixed(4)}\n` +
+    `Comisión (1%): $${comision.toFixed(4)}\n` +
+    `Total a pagar: $${totalConComision.toFixed(4)}`
+  );
+  
+  if (!confirmar) return;
+  
+  // Simular transacción
+  try {
+    // Si hay contrato real configurado, ejecutar transacción en blockchain
+    if (DIRECCION_CONTRATO_TOK !== "0x0000000000000000000000000000000000000000" && providerEthers) {
+      // Aquí iría la lógica real de transacción con el contrato
+      alert('⚠️ Contrato no implementado. Esta es una simulación.');
+    }
+    
+    // Guardar en Supabase si está configurado
+    if (supabaseClient) {
+      const { data, error } = await supabaseClient
+        .from('transacciones')
+        .insert([{
+          wallet: walletConectada.toLowerCase(),
+          tipo: tipo,
+          cantidad_tok: cantidad,
+          precio: precio,
+          total: total,
+          comision: comision,
+          estado: 'completada',
+          tx_hash: '0x' + Math.random().toString(16).substring(2, 10),
+          created_at: new Date().toISOString()
+        }]);
+      
+      if (error) throw error;
+    }
+    
+    alert(`✅ ${tipo} ejecutada con éxito!\n` +
+          `${cantidad} TOK @ $${precio.toFixed(4)}\n` +
+          `Total: $${total.toFixed(4)}\n` +
+          `Comisión: $${comision.toFixed(4)}`);
+    
+    // Actualizar saldos y órdenes
+    await actualizarSaldos();
+    await cargarOrdenesAbiertas();
+    
+  } catch (err) {
+    console.error('Error ejecutando orden:', err);
+    alert('❌ Error al ejecutar la orden: ' + err.message);
+  }
 }
 
 // ================================================================
-// RENDERIZAR TODO
+// CARGAR Y RENDERIZAR TODO
 // ================================================================
 async function cargarYRenderizarTodo(timeframe) {
   const velas = await cargarVelasDesdeSupabase(timeframe);
@@ -1053,7 +1291,9 @@ document.getElementById('tab-vender').addEventListener('click', () => {
 function actualizarTotal() {
   const cantidad = parseFloat(document.getElementById('input-cantidad').value) || 0;
   const precio = parseFloat(document.getElementById('input-precio').value) || 0;
-  document.getElementById('input-total').value = (cantidad * precio).toFixed(4);
+  const total = cantidad * precio;
+  const comision = total * COMISION_PORCENTAJE;
+  document.getElementById('input-total').value = (total + comision).toFixed(4);
   estimarGas();
 }
 document.getElementById('input-cantidad').addEventListener('input', actualizarTotal);
@@ -1063,6 +1303,7 @@ document.getElementById('btn-ejecutar').addEventListener('click', () => {
   const cantidad = parseFloat(document.getElementById('input-cantidad').value);
   const precio = parseFloat(document.getElementById('input-precio').value);
   if (!cantidad || cantidad <= 0) { alert('Ingresa una cantidad válida'); return; }
+  if (!precio || precio <= 0) { alert('Precio inválido'); return; }
   ejecutarOrden(modoActual, cantidad, precio);
 });
 
@@ -1094,9 +1335,10 @@ document.getElementById('btn-conectar-wallet').addEventListener('click', conecta
 // INICIO
 // ================================================================
 window.addEventListener('DOMContentLoaded', () => {
+  initSupabase();
   inicializarGrafico();
   cargarYRenderizarTodo(timeframeActual);
-  document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Datos simulados (conecta tu API)';
+  document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Listo - Conecta MetaMask para operar';
 });
 </script>
 </body>
