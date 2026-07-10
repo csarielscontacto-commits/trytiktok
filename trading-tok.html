@@ -94,6 +94,75 @@
     margin-bottom:16px; padding-right:30px;}
   .modal-punto{margin-bottom:14px; font-size:0.9rem; line-height:1.5; color:var(--texto);}
   .modal-punto strong{color:var(--trigo);}
+
+  /* --- NUEVO: Eslogan y flecha verde --- */
+  .slogan-wrapper{
+    padding:12px 20px 4px 20px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    border-bottom:1px solid #2a221c;
+  }
+  .slogan-icono{
+    flex-shrink:0;
+    width:36px;
+    height:36px;
+    margin-top:2px;
+  }
+  .slogan-texto{
+    font-size:0.8rem;
+    line-height:1.5;
+    color:#c4b8aa;
+    font-style:italic;
+  }
+  .slogan-texto strong{
+    color:var(--trigo);
+    font-style:normal;
+  }
+
+  /* --- Checkbox de MetaMask --- */
+  .conexion-check-wrapper{
+    padding:10px 20px 4px 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .conexion-check-wrapper input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    accent-color:#3b82f6;
+    cursor:pointer;
+    flex-shrink:0;
+    appearance:none;
+    -webkit-appearance:none;
+    background:var(--panel);
+    border:2px solid #3a2f26;
+    border-radius:4px;
+    transition:all 0.2s;
+    position:relative;
+  }
+  .conexion-check-wrapper input[type="checkbox"]:checked{
+    background:#3b82f6;
+    border-color:#3b82f6;
+  }
+  .conexion-check-wrapper input[type="checkbox"]:checked::after{
+    content:"✓";
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+  }
+  .conexion-check-wrapper label{
+    font-size:0.8rem;
+    color:#a89882;
+    cursor:pointer;
+  }
+  .conexion-check-wrapper label strong{
+    color:var(--trigo);
+  }
 </style>
 </head>
 <body>
@@ -107,6 +176,26 @@
 </div>
 
 <div class="estado-conexion" id="estado-conexion">● Conectando a datos...</div>
+
+<!-- ========== NUEVO: SLOGAN CON FLECHA VERDE ========== -->
+<div class="slogan-wrapper">
+  <svg class="slogan-icono" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="18" r="16" fill="none" stroke="#3fae6a" stroke-width="2.5"/>
+    <path d="M10 18 L14 22 L26 12" stroke="#3fae6a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="18" cy="18" r="18" fill="none" stroke="#3fae6a" stroke-width="1.5" opacity="0.3"/>
+  </svg>
+  <p class="slogan-texto">
+    <strong>Un estratega conoce el valor de sus activos.</strong> En Sariel's, no te obligamos al consumo: te damos el control. Canjea tus TOKs por galletas de alta calidad o transfiérelos a quien necesite completar su compra. El valor es tuyo, tú decides cómo ejecutarlo.
+  </p>
+</div>
+
+<!-- ========== NUEVO: CHECKBOX DE CONEXIÓN METAMASK ========== -->
+<div class="conexion-check-wrapper">
+  <input type="checkbox" id="check-conectar">
+  <label for="check-conectar">
+    <strong>Conectar MetaMask</strong>
+  </label>
+</div>
 
 <div class="timeframes">
   <button data-tf="1m">1m</button>
@@ -202,6 +291,13 @@ let panelPortafolioActivo = 'ordenes';
 const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
 const COMISION_PORCENTAJE = 0.01;
 
+// ========== CHECKBOX: Conectar MetaMask ==========
+document.getElementById('check-conectar').addEventListener('change', function() {
+  if (this.checked) {
+    conectarMetaMask();
+  }
+});
+
 const modalOverlay = document.getElementById('modal-legal-overlay');
 document.getElementById('btn-abrir-legal').addEventListener('click', () => {
   modalOverlay.classList.add('activo');
@@ -216,6 +312,7 @@ modalOverlay.addEventListener('click', (e) => {
 async function conectarMetaMask() {
   if (typeof window.ethereum === 'undefined') {
     alert('No se detectó MetaMask. Instálalo desde metamask.io o ábrelo en su navegador/app.');
+    document.getElementById('check-conectar').checked = false;
     return;
   }
   try {
@@ -236,15 +333,17 @@ async function conectarMetaMask() {
 
     await actualizarSaldos();
     await cargarOrdenesAbiertas();
+    document.getElementById('check-conectar').checked = true;
 
   } catch (err) {
     console.error(err);
     alert('No se pudo conectar la wallet. Intenta de nuevo.');
+    document.getElementById('check-conectar').checked = false;
   }
 }
 
-const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000"; // TODO_API
-const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000"; // TODO_API
+const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
+const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
 const ABI_ERC20_MINIMO = [
   "function balanceOf(address owner) view returns (uint256)",
   "function decimals() view returns (uint8)",
