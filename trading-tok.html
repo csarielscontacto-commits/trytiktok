@@ -12,140 +12,174 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --masa:#1a1512; --trigo:#c9a876; --horno:#e85d3d;
-    --verde:#3fae6a; --rojo:#e0483e; --panel:#241d18; --texto:#f0e6d8;
+    --masa:#0d0b0a; --trigo:#d4af7a; --horno:#e85d3d;
+    --verde:#2ecc71; --verde-brillante:#00f5a0;
+    --rojo:#e74c3c; --rojo-brillante:#ff6b6b;
+    --panel:#1a1512; --texto:#f0e6d8; --fondo-grafico:#0f0c0a;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{background:var(--masa); color:var(--texto); font-family:'Inter',sans-serif;}
   h1,h2{font-family:'Fraunces',serif;}
-  .header{padding:16px 20px; border-bottom:1px solid #3a2f26;}
-  .header h1{font-size:1.3rem; color:var(--trigo);}
-  .precio-actual{font-size:1.8rem; font-weight:600;}
-  .cambio-pct{font-size:0.9rem; padding:2px 8px; border-radius:6px; margin-left:8px;}
-  .cambio-pct.up{background:rgba(63,174,106,0.15); color:var(--verde);}
-  .cambio-pct.down{background:rgba(224,72,62,0.15); color:var(--rojo);}
-  #chart-container{width:100%; height:340px;}
-  #indicador-container{width:100%; height:120px; border-top:1px solid #3a2f26;}
-  .timeframes{display:flex; gap:8px; padding:10px 20px;}
-  .timeframes button{background:var(--panel); border:1px solid #3a2f26; color:var(--texto);
-    padding:6px 14px; border-radius:8px; font-size:0.85rem;}
-  .timeframes button.activo{background:var(--horno); border-color:var(--horno); color:#fff;}
-  .panel-wallet{padding:14px 20px; background:var(--panel); margin:16px 16px 0; border-radius:14px;}
-  .btn-wallet{width:100%; padding:12px; background:#f6851b; border:none; border-radius:10px; color:#fff; font-weight:600;}
-  .wallet-direccion{font-size:0.85rem; color:var(--trigo); word-break:break-all; margin-top:6px;}
-  .wallet-balance{font-size:0.9rem; margin-top:4px;}
-  .saldos-grid{display:flex; gap:10px; margin-top:8px;}
-  .saldo-item{flex:1; background:#1a1512; border-radius:8px; padding:8px; text-align:center;}
-  .saldo-item .label{font-size:0.7rem; color:#a89882;}
-  .saldo-item .valor{font-size:1rem; font-weight:600; color:var(--texto);}
-  .panel-operar{padding:16px 20px; background:var(--panel); margin:16px; border-radius:14px;}
-  .tabs-operar{display:flex; gap:0; margin-bottom:14px; border-radius:10px; overflow:hidden;}
-  .tab-btn{flex:1; padding:10px; text-align:center; background:#2e2620; border:none; color:var(--texto);}
-  .tab-btn.comprar.activo{background:var(--verde); color:#fff;}
-  .tab-btn.vender.activo{background:var(--rojo); color:#fff;}
-  .campo{margin-bottom:12px;}
-  .campo label{display:block; font-size:0.8rem; color:#a89882; margin-bottom:4px;}
-  .campo input{width:100%; padding:10px; background:#1a1512; border:1px solid #3a2f26;
-    border-radius:8px; color:var(--texto); font-size:1rem;}
-  .gas-estimado{font-size:0.8rem; color:var(--trigo); margin:-4px 0 12px; padding:8px 10px;
-    background:#1a1512; border-radius:8px; display:flex; justify-content:space-between;}
-  .btn-ejecutar{width:100%; padding:14px; border:none; border-radius:10px; font-weight:600;
-    font-size:1rem; color:#fff;}
-  .btn-ejecutar.comprar{background:var(--verde);}
-  .btn-ejecutar.vender{background:var(--rojo);}
-  .btn-ejecutar:disabled{opacity:0.5;}
-  .estado-conexion{font-size:0.75rem; color:#a89882; padding:0 20px 10px;}
-  .estado-conexion.conectado{color:var(--verde);}
-  .panel-portafolio{margin:16px; background:var(--panel); border-radius:14px; overflow:hidden;}
-  .tabs-portafolio{display:flex;}
-  .tab-portafolio{flex:1; padding:12px 6px; text-align:center; background:#1a1512; border:none;
-    color:#a89882; font-size:0.78rem;}
-  .tab-portafolio.activo{background:var(--panel); color:var(--trigo); font-weight:600;}
-  .contenido-portafolio{padding:14px 16px; min-height:80px;}
-  .orden-item, .tx-item{display:flex; justify-content:space-between; align-items:center;
-    padding:10px 0; border-bottom:1px solid #3a2f26; font-size:0.85rem;}
-  .orden-item:last-child, .tx-item:last-child{border-bottom:none;}
-  .orden-tipo.compra, .tx-tipo.compra{color:var(--verde);}
-  .orden-tipo.venta, .tx-tipo.venta{color:var(--rojo);}
-  .btn-cancelar{background:none; border:1px solid var(--rojo); color:var(--rojo);
-    padding:4px 10px; border-radius:6px; font-size:0.75rem;}
-  .tx-link{color:var(--trigo); font-size:0.75rem; text-decoration:underline;}
-  .vacio-portafolio{color:#a89882; font-size:0.85rem; text-align:center; padding:10px 0;}
-  .footer-legal{text-align:center; padding:20px; margin-top:8px; display:flex; justify-content:center;
-    align-items:center; gap:6px; flex-wrap:wrap;}
-  .link-legal{color:#a89882; font-size:0.8rem; text-decoration:underline; background:none; border:none; cursor:pointer;}
-  .modal-overlay{
-    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.65); z-index:2000;
-    align-items:center; justify-content:center; padding:20px;
-  }
-  .modal-overlay.activo{display:flex;}
-  .modal-caja{
-    background:var(--panel); border-radius:14px; max-width:480px; width:100%;
-    max-height:80vh; overflow-y:auto; position:relative; padding:24px 20px;
-    border:1px solid #3a2f26;
-  }
-  .modal-cerrar{
-    position:absolute; top:14px; right:14px; background:#1a1512; border:1px solid #3a2f26;
-    color:var(--texto); width:32px; height:32px; border-radius:50%; font-size:1rem;
-    cursor:pointer; display:flex; align-items:center; justify-content:center;
-  }
-  .modal-titulo{font-family:'Fraunces',serif; color:var(--trigo); font-size:1.2rem;
-    margin-bottom:16px; padding-right:30px;}
-  .modal-punto{margin-bottom:14px; font-size:0.9rem; line-height:1.5; color:var(--texto);}
-  .modal-punto strong{color:var(--trigo);}
 
-  /* --- SLOGAN --- */
+  /* HEADER CON LOGO */
+  .header{
+    padding:14px 20px;
+    border-bottom:1px solid #2a221c;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:linear-gradient(180deg, #1a1512 0%, #0d0b0a 100%);
+  }
+  .header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .header-logo{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--trigo), #a8845a);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:0.9rem;
+    color:var(--masa);
+    box-shadow:0 0 20px rgba(212,175,122,0.15);
+    flex-shrink:0;
+  }
+  .header h1{
+    font-size:1.1rem;
+    color:var(--trigo);
+    letter-spacing:0.5px;
+  }
+  .header h1 small{
+    font-size:0.6rem;
+    color:#8a7a6a;
+    font-weight:400;
+    letter-spacing:1px;
+  }
+  .header-precio{
+    text-align:right;
+  }
+  .precio-actual{
+    font-size:1.6rem;
+    font-weight:600;
+    color:#fff;
+    letter-spacing:0.5px;
+  }
+  .cambio-pct{
+    font-size:0.75rem;
+    padding:2px 10px;
+    border-radius:12px;
+    margin-left:4px;
+    font-weight:500;
+  }
+  .cambio-pct.up{background:rgba(46,204,113,0.2); color:var(--verde-brillante);}
+  .cambio-pct.down{background:rgba(231,76,60,0.2); color:var(--rojo-brillante);}
+
+  /* ESTADO DE CONEXIÓN */
+  .estado-conexion{
+    font-size:0.7rem;
+    color:#6a5d50;
+    padding:6px 20px;
+    background:#11100e;
+    border-bottom:1px solid #1f1a16;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .estado-conexion .dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#6a5d50;
+    display:inline-block;
+  }
+  .estado-conexion.conectado .dot{background:var(--verde-brillante); box-shadow:0 0 8px rgba(0,245,160,0.3);}
+  .estado-conexion.conectado{color:var(--verde-brillante);}
+
+  /* GRÁFICO - CONTRASTE MEJORADO */
+  #chart-container{width:100%; height:340px; background:var(--fondo-grafico);}
+  #indicador-container{width:100%; height:100px; border-top:1px solid #1f1a16; background:var(--fondo-grafico);}
+
+  /* TIMEFRAMES */
+  .timeframes{
+    display:flex;
+    gap:4px;
+    padding:8px 20px;
+    background:var(--fondo-grafico);
+    border-bottom:1px solid #1f1a16;
+  }
+  .timeframes button{
+    background:transparent;
+    border:none;
+    color:#6a5d50;
+    padding:4px 12px;
+    border-radius:4px;
+    font-size:0.7rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+    letter-spacing:0.3px;
+  }
+  .timeframes button:hover{color:var(--texto);}
+  .timeframes button.activo{
+    color:#fff;
+    background:rgba(212,175,122,0.15);
+  }
+
+  /* SLOGAN */
   .slogan-wrapper{
-    padding:8px 20px 6px 20px;
+    padding:8px 20px;
+    background:#11100e;
+    border-bottom:1px solid #1f1a16;
     display:flex;
     align-items:flex-start;
     gap:10px;
-    border-bottom:1px solid #2a221c;
   }
   .slogan-icono{
     flex-shrink:0;
-    width:28px;
-    height:28px;
-    margin-top:2px;
+    width:22px;
+    height:22px;
+    margin-top:1px;
   }
   .slogan-texto{
-    font-size:0.75rem;
+    font-size:0.7rem;
     line-height:1.5;
-    color:#c4b8aa;
+    color:#8a7a6a;
     font-style:italic;
   }
-  .slogan-texto strong{
-    color:var(--trigo);
-    font-style:normal;
-  }
+  .slogan-texto strong{color:var(--trigo); font-style:normal;}
 
-  /* --- Checkbox de aceptación de Términos --- */
+  /* CHECKBOX DE ACEPTACIÓN */
   .aceptacion-check-wrapper{
-    padding:8px 20px 8px 20px;
+    padding:8px 20px;
     display:flex;
     align-items:center;
     gap:10px;
-    border-bottom:1px solid #2a221c;
-    background:#1a1512;
+    background:#11100e;
+    border-bottom:1px solid #1f1a16;
   }
   .aceptacion-check-wrapper input[type="checkbox"]{
-    width:18px;
-    height:18px;
-    accent-color:#3b82f6;
+    width:16px;
+    height:16px;
+    accent-color:#d4af7a;
     cursor:pointer;
     flex-shrink:0;
     appearance:none;
     -webkit-appearance:none;
-    background:var(--panel);
+    background:#1a1512;
     border:2px solid #3a2f26;
-    border-radius:4px;
+    border-radius:3px;
     transition:all 0.2s;
     position:relative;
   }
   .aceptacion-check-wrapper input[type="checkbox"]:checked{
-    background:#3b82f6;
-    border-color:#3b82f6;
+    background:#d4af7a;
+    border-color:#d4af7a;
   }
   .aceptacion-check-wrapper input[type="checkbox"]:checked::after{
     content:"✓";
@@ -153,13 +187,13 @@
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    color:#fff;
-    font-size:13px;
+    color:var(--masa);
+    font-size:11px;
     font-weight:700;
   }
   .aceptacion-check-wrapper label{
-    font-size:0.78rem;
-    color:#a89882;
+    font-size:0.7rem;
+    color:#8a7a6a;
     cursor:pointer;
   }
   .aceptacion-check-wrapper label strong{
@@ -167,36 +201,35 @@
     text-decoration:underline;
     cursor:pointer;
   }
-  .aceptacion-check-wrapper label strong:hover{
-    color:#c9a876;
-  }
+  .aceptacion-check-wrapper label strong:hover{color:#d4af7a;}
 
-  /* --- Checkbox de MetaMask (se muestra después de aceptar términos) --- */
+  /* CHECKBOX CONEXIÓN METAMASK */
   .conexion-check-wrapper{
-    padding:8px 20px 8px 20px;
-    display:flex;
+    padding:8px 20px;
+    display:none;
     align-items:center;
     gap:10px;
-    border-bottom:1px solid #2a221c;
-    background:#1f1915;
+    background:#11100e;
+    border-bottom:1px solid #1f1a16;
   }
+  .conexion-check-wrapper.visible{display:flex;}
   .conexion-check-wrapper input[type="checkbox"]{
-    width:18px;
-    height:18px;
-    accent-color:#3b82f6;
+    width:16px;
+    height:16px;
+    accent-color:#f6851b;
     cursor:pointer;
     flex-shrink:0;
     appearance:none;
     -webkit-appearance:none;
-    background:var(--panel);
+    background:#1a1512;
     border:2px solid #3a2f26;
-    border-radius:4px;
+    border-radius:3px;
     transition:all 0.2s;
     position:relative;
   }
   .conexion-check-wrapper input[type="checkbox"]:checked{
-    background:#3b82f6;
-    border-color:#3b82f6;
+    background:#f6851b;
+    border-color:#f6851b;
   }
   .conexion-check-wrapper input[type="checkbox"]:checked::after{
     content:"✓";
@@ -205,52 +238,297 @@
     left:50%;
     transform:translate(-50%,-50%);
     color:#fff;
-    font-size:13px;
+    font-size:11px;
     font-weight:700;
   }
   .conexion-check-wrapper label{
-    font-size:0.8rem;
-    color:#a89882;
+    font-size:0.75rem;
+    color:#8a7a6a;
     cursor:pointer;
   }
-  .conexion-check-wrapper label strong{
-    color:var(--trigo);
-  }
+  .conexion-check-wrapper label strong{color:var(--trigo);}
 
-  /* --- Ocultar conexion-check-wrapper inicialmente --- */
-  .conexion-check-wrapper{
-    display:none;
+  /* PANEL WALLET */
+  .panel-wallet{
+    padding:12px 16px;
+    background:var(--panel);
+    margin:12px 12px 0;
+    border-radius:12px;
+    border:1px solid #1f1a16;
   }
-  .conexion-check-wrapper.visible{
+  .btn-wallet{
+    width:100%;
+    padding:10px;
+    background:linear-gradient(135deg, #f6851b, #e07a15);
+    border:none;
+    border-radius:8px;
+    color:#fff;
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .btn-wallet:hover{transform:scale(1.01); box-shadow:0 4px 20px rgba(246,133,27,0.2);}
+  .wallet-direccion{
+    font-size:0.75rem;
+    color:var(--trigo);
+    word-break:break-all;
+    margin-top:4px;
+  }
+  .saldos-grid{
     display:flex;
+    gap:8px;
+    margin-top:8px;
   }
+  .saldo-item{
+    flex:1;
+    background:#0d0b0a;
+    border-radius:6px;
+    padding:6px 8px;
+    text-align:center;
+  }
+  .saldo-item .label{font-size:0.6rem; color:#6a5d50; text-transform:uppercase; letter-spacing:0.5px;}
+  .saldo-item .valor{font-size:0.85rem; font-weight:600; color:var(--texto);}
+
+  /* PANEL OPERAR */
+  .panel-operar{
+    padding:14px 16px;
+    background:var(--panel);
+    margin:12px;
+    border-radius:12px;
+    border:1px solid #1f1a16;
+  }
+  .tabs-operar{
+    display:flex;
+    gap:0;
+    margin-bottom:12px;
+    border-radius:8px;
+    overflow:hidden;
+    background:#0d0b0a;
+  }
+  .tab-btn{
+    flex:1;
+    padding:8px;
+    text-align:center;
+    background:transparent;
+    border:none;
+    color:#6a5d50;
+    font-size:0.8rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .tab-btn.comprar.activo{background:var(--verde); color:#fff;}
+  .tab-btn.vender.activo{background:var(--rojo); color:#fff;}
+  .tab-btn:hover:not(.activo){color:var(--texto);}
+
+  .campo{margin-bottom:10px;}
+  .campo label{display:block; font-size:0.7rem; color:#6a5d50; margin-bottom:3px; letter-spacing:0.3px;}
+  .campo input{
+    width:100%;
+    padding:8px 12px;
+    background:#0d0b0a;
+    border:1px solid #1f1a16;
+    border-radius:6px;
+    color:var(--texto);
+    font-size:0.9rem;
+    outline:none;
+    transition:border 0.2s;
+  }
+  .campo input:focus{border-color:var(--trigo);}
+  .campo input:disabled{opacity:0.6;}
+
+  .gas-estimado{
+    font-size:0.7rem;
+    color:#6a5d50;
+    margin:-2px 0 10px;
+    padding:6px 10px;
+    background:#0d0b0a;
+    border-radius:6px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .gas-estimado span:last-child{color:var(--trigo); font-weight:500;}
+
+  .btn-ejecutar{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    font-size:0.9rem;
+    color:#fff;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .btn-ejecutar.comprar{background:linear-gradient(135deg, var(--verde), #1a9c5a);}
+  .btn-ejecutar.vender{background:linear-gradient(135deg, var(--rojo), #c0392b);}
+  .btn-ejecutar:hover{transform:scale(1.01);}
+  .btn-ejecutar:disabled{opacity:0.5; cursor:not-allowed; transform:none;}
+
+  /* PANEL PORTAFOLIO */
+  .panel-portafolio{
+    margin:12px;
+    background:var(--panel);
+    border-radius:12px;
+    border:1px solid #1f1a16;
+    overflow:hidden;
+  }
+  .tabs-portafolio{display:flex; background:#0d0b0a;}
+  .tab-portafolio{
+    flex:1;
+    padding:10px 6px;
+    text-align:center;
+    background:transparent;
+    border:none;
+    color:#6a5d50;
+    font-size:0.7rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+    letter-spacing:0.3px;
+  }
+  .tab-portafolio.activo{color:var(--trigo); border-bottom:2px solid var(--trigo);}
+  .contenido-portafolio{padding:12px 14px; min-height:60px;}
+
+  .orden-item, .tx-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+    border-bottom:1px solid #1f1a16;
+    font-size:0.8rem;
+  }
+  .orden-item:last-child, .tx-item:last-child{border-bottom:none;}
+  .orden-tipo.compra, .tx-tipo.compra{color:var(--verde-brillante);}
+  .orden-tipo.venta, .tx-tipo.venta{color:var(--rojo-brillante);}
+
+  .btn-cancelar{
+    background:none;
+    border:1px solid var(--rojo);
+    color:var(--rojo);
+    padding:3px 10px;
+    border-radius:4px;
+    font-size:0.65rem;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .btn-cancelar:hover{background:var(--rojo); color:#fff;}
+  .tx-link{color:var(--trigo); font-size:0.7rem; text-decoration:underline; cursor:pointer;}
+  .vacio-portafolio{color:#6a5d50; font-size:0.8rem; text-align:center; padding:8px 0;}
+
+  /* FOOTER LEGAL */
+  .footer-legal{
+    text-align:center;
+    padding:14px 20px;
+    margin-top:4px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+    border-top:1px solid #1f1a16;
+  }
+  .link-legal{
+    color:#6a5d50;
+    font-size:0.7rem;
+    text-decoration:underline;
+    background:none;
+    border:none;
+    cursor:pointer;
+    transition:color 0.2s;
+  }
+  .link-legal:hover{color:var(--trigo);}
+
+  /* MODAL */
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    z-index:2000;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    backdrop-filter:blur(4px);
+  }
+  .modal-overlay.activo{display:flex;}
+  .modal-caja{
+    background:var(--panel);
+    border-radius:14px;
+    max-width:420px;
+    width:100%;
+    max-height:80vh;
+    overflow-y:auto;
+    padding:24px 20px;
+    border:1px solid #2a221c;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal-cerrar{
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:#0d0b0a;
+    border:1px solid #1f1a16;
+    color:var(--texto);
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    font-size:0.9rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .modal-titulo{
+    font-family:'Fraunces',serif;
+    color:var(--trigo);
+    font-size:1.1rem;
+    margin-bottom:14px;
+    padding-right:30px;
+  }
+  .modal-punto{
+    margin-bottom:12px;
+    font-size:0.85rem;
+    line-height:1.5;
+    color:#b8a898;
+  }
+  .modal-punto strong{color:var(--trigo);}
+  .modal-caja{position:relative;}
 </style>
 </head>
 <body>
 
+<!-- ========== HEADER CON LOGO ========== -->
 <div class="header">
-  <h1>TOK / Sariel's Token</h1>
-  <div>
+  <div class="header-left">
+    <div class="header-logo">S</div>
+    <h1>Sariel's <small>ECOSYSTEM</small></h1>
+  </div>
+  <div class="header-precio">
     <span class="precio-actual" id="precio-actual">--</span>
     <span class="cambio-pct" id="cambio-pct">--</span>
   </div>
 </div>
 
-<div class="estado-conexion" id="estado-conexion">● Conectando a datos...</div>
+<!-- ========== ESTADO DE CONEXIÓN ========== -->
+<div class="estado-conexion" id="estado-conexion">
+  <span class="dot"></span> Conectando a datos...
+</div>
 
-<!-- ========== SLOGAN (AHORA ABAJO DEL HEADER) ========== -->
+<!-- ========== SLOGAN ========== -->
 <div class="slogan-wrapper">
-  <svg class="slogan-icono" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="18" cy="18" r="16" fill="none" stroke="#3fae6a" stroke-width="2.5"/>
-    <path d="M10 18 L14 22 L26 12" stroke="#3fae6a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="18" cy="18" r="18" fill="none" stroke="#3fae6a" stroke-width="1.5" opacity="0.3"/>
+  <svg class="slogan-icono" viewBox="0 0 36 36" fill="none">
+    <circle cx="18" cy="18" r="16" stroke="#d4af7a" stroke-width="2"/>
+    <path d="M10 18 L14 22 L26 12" stroke="#d4af7a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <p class="slogan-texto">
     <strong>Un estratega conoce el valor de sus activos.</strong> En Sariel's, no te obligamos al consumo: te damos el control. Canjea tus TOKs por galletas de alta calidad o transfiérelos a quien necesite completar su compra. El valor es tuyo, tú decides cómo ejecutarlo.
   </p>
 </div>
 
-<!-- ========== CHECKBOX: ACEPTAR TÉRMINOS Y CONDICIONES ========== -->
+<!-- ========== ACEPTAR TÉRMINOS ========== -->
 <div class="aceptacion-check-wrapper">
   <input type="checkbox" id="check-aceptar">
   <label for="check-aceptar">
@@ -258,7 +536,7 @@
   </label>
 </div>
 
-<!-- ========== CHECKBOX: CONECTAR METAMASK (se muestra tras aceptar términos) ========== -->
+<!-- ========== CONECTAR METAMASK ========== -->
 <div class="conexion-check-wrapper" id="conexion-check-wrapper">
   <input type="checkbox" id="check-conectar">
   <label for="check-conectar">
@@ -266,15 +544,20 @@
   </label>
 </div>
 
+<!-- ========== TIMEFRAMES ========== -->
 <div class="timeframes">
   <button data-tf="1m">1m</button>
+  <button data-tf="5m">5m</button>
+  <button data-tf="15m">15m</button>
   <button data-tf="1h">1h</button>
   <button data-tf="1d" class="activo">1d</button>
 </div>
 
+<!-- ========== GRÁFICO ========== -->
 <div id="chart-container"></div>
 <div id="indicador-container"></div>
 
+<!-- ========== PANEL WALLET ========== -->
 <div class="panel-wallet" id="panel-wallet">
   <button id="btn-conectar-wallet" class="btn-wallet">🦊 Conectar MetaMask</button>
   <div id="wallet-info" style="display:none;">
@@ -285,17 +568,18 @@
         <div class="valor" id="saldo-tok">--</div>
       </div>
       <div class="saldo-item">
-        <div class="label">USDT (pago)</div>
+        <div class="label">USDT</div>
         <div class="valor" id="saldo-usdt">--</div>
       </div>
       <div class="saldo-item">
-        <div class="label">MATIC (gas)</div>
+        <div class="label">MATIC</div>
         <div class="valor" id="saldo-matic">--</div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ========== PANEL OPERAR ========== -->
 <div class="panel-operar">
   <div class="tabs-operar">
     <button class="tab-btn comprar activo" id="tab-comprar">Comprar</button>
@@ -323,6 +607,7 @@
   <button class="btn-ejecutar comprar" id="btn-ejecutar">Ejecutar compra</button>
 </div>
 
+<!-- ========== PANEL PORTAFOLIO ========== -->
 <div class="panel-portafolio">
   <div class="tabs-portafolio">
     <button class="tab-portafolio activo" data-panel="ordenes">Órdenes Abiertas</button>
@@ -333,12 +618,14 @@
   </div>
 </div>
 
+<!-- ========== FOOTER LEGAL ========== -->
 <div class="footer-legal">
   <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
-  <span style="color:#5a4d40;">·</span>
+  <span style="color:#3a2f26;">·</span>
   <a class="link-legal" href="terminos-legales.html" target="_blank">Términos y Condiciones completos</a>
 </div>
 
+<!-- ========== MODAL TÉRMINOS ========== -->
 <div class="modal-overlay" id="modal-legal-overlay">
   <div class="modal-caja">
     <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
@@ -346,11 +633,14 @@
     <p class="modal-punto"><strong>Derecho de Redención:</strong> El derecho a obtener un descuento de $75.00 MXN en la adquisición de domos de galleta es una utilidad exclusiva del titular de un NFT Sariel's.</p>
     <p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios. La marca no garantiza que el valor del TOK sea equivalente al precio de venta del producto físico.</p>
     <p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción de compra o venta de tokens realizada a través de la plataforma está sujeta a una comisión del 1% a favor de la marca, destinada al mantenimiento del ecosistema.</p>
-    <p class="modal-punto"><strong>Verifica los Términos y Condiciones antes de usar la plataforma.</strong></p>
+    <p class="modal-punto" style="color:#6a5d50; font-size:0.8rem;">Verifica los Términos y Condiciones antes de usar la plataforma.</p>
   </div>
 </div>
 
 <script>
+// ================================================================
+// CONFIGURACIÓN
+// ================================================================
 let modoActual = 'compra';
 let timeframeActual = '1d';
 let chart, seriesVelas, chartIndicador, seriesIndicador;
@@ -361,41 +651,44 @@ let panelPortafolioActivo = 'ordenes';
 const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
 const COMISION_PORCENTAJE = 0.01;
 
-// ========== ACEPTAR TÉRMINOS → MUESTRA CHECKBOX DE CONEXIÓN ==========
+// ================================================================
+// CHECKBOX: ACEPTAR TÉRMINOS → MUESTRA CONEXIÓN METAMASK
+// ================================================================
 document.getElementById('check-aceptar').addEventListener('change', function() {
   const conexionWrapper = document.getElementById('conexion-check-wrapper');
   if (this.checked) {
     conexionWrapper.classList.add('visible');
   } else {
     conexionWrapper.classList.remove('visible');
-    // Si desmarca términos, también desmarca y desconecta MetaMask
     document.getElementById('check-conectar').checked = false;
   }
 });
 
-// ========== ABRIR MODAL DESDE EL CHECKBOX ==========
 document.getElementById('abrir-legal-desde-check').addEventListener('click', function(e) {
   e.preventDefault();
   document.getElementById('modal-legal-overlay').classList.add('activo');
 });
 
-// ========== CHECKBOX: Conectar MetaMask ==========
+// ================================================================
+// CHECKBOX: CONECTAR METAMASK
+// ================================================================
 document.getElementById('check-conectar').addEventListener('change', function() {
   if (this.checked) {
     conectarMetaMask();
   } else {
-    // Si se desmarca, desconectar
     walletConectada = null;
     providerEthers = null;
     document.getElementById('btn-conectar-wallet').style.display = 'block';
     document.getElementById('wallet-info').style.display = 'none';
-    document.getElementById('estado-conexion').textContent = '● Desconectado';
-    document.getElementById('estado-conexion').classList.remove('conectado');
+    document.getElementById('estado-conexion').className = 'estado-conexion';
+    document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Desconectado';
     document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
   }
 });
 
-// ========== MODAL DE TÉRMINOS ==========
+// ================================================================
+// MODAL TÉRMINOS
+// ================================================================
 const modalOverlay = document.getElementById('modal-legal-overlay');
 document.getElementById('btn-abrir-legal').addEventListener('click', () => {
   modalOverlay.classList.add('activo');
@@ -407,9 +700,12 @@ modalOverlay.addEventListener('click', (e) => {
   if (e.target === modalOverlay) modalOverlay.classList.remove('activo');
 });
 
+// ================================================================
+// CONEXIÓN METAMASK
+// ================================================================
 async function conectarMetaMask() {
   if (typeof window.ethereum === 'undefined') {
-    alert('No se detectó MetaMask. Instálalo desde metamask.io o ábrelo en su navegador/app.');
+    alert('No se detectó MetaMask. Instálalo desde metamask.io');
     document.getElementById('check-conectar').checked = false;
     return;
   }
@@ -432,22 +728,24 @@ async function conectarMetaMask() {
     await actualizarSaldos();
     await cargarOrdenesAbiertas();
     document.getElementById('check-conectar').checked = true;
-    document.getElementById('estado-conexion').textContent = '● Conectado a Polygon Amoy';
-    document.getElementById('estado-conexion').classList.add('conectado');
+    document.getElementById('estado-conexion').className = 'estado-conexion conectado';
+    document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
 
   } catch (err) {
     console.error(err);
-    alert('No se pudo conectar la wallet. Intenta de nuevo.');
+    alert('No se pudo conectar la wallet.');
     document.getElementById('check-conectar').checked = false;
   }
 }
 
+// ================================================================
+// CONTRATOS Y SALDOS
+// ================================================================
 const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
 const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
 const ABI_ERC20_MINIMO = [
   "function balanceOf(address owner) view returns (uint256)",
-  "function decimals() view returns (uint8)",
-  "function transfer(address to, uint256 amount) returns (bool)"
+  "function decimals() view returns (uint8)"
 ];
 
 async function actualizarSaldos() {
@@ -470,7 +768,7 @@ async function actualizarSaldos() {
       document.getElementById('saldo-tok').textContent = 'Error';
     }
   } else {
-    document.getElementById('saldo-tok').textContent = 'Sin conectar';
+    document.getElementById('saldo-tok').textContent = '--';
   }
 
   if (DIRECCION_CONTRATO_PAGO !== "0x0000000000000000000000000000000000000000") {
@@ -483,66 +781,90 @@ async function actualizarSaldos() {
       document.getElementById('saldo-usdt').textContent = 'Error';
     }
   } else {
-    document.getElementById('saldo-usdt').textContent = 'Sin conectar';
+    document.getElementById('saldo-usdt').textContent = '--';
   }
 }
 
+// ================================================================
+// GAS
+// ================================================================
 async function estimarGas() {
   if (!providerEthers) {
-    document.getElementById('gas-estimado-valor').textContent = 'Conecta tu wallet primero';
+    document.getElementById('gas-estimado-valor').textContent = 'Conecta tu wallet';
     return;
   }
   try {
     const gasPrice = await providerEthers.getGasPrice();
-    const gasLimiteAproximado = ethers.BigNumber.from("65000");
-    const costoTotal = gasPrice.mul(gasLimiteAproximado);
+    const gasLimite = ethers.BigNumber.from("65000");
+    const costo = gasPrice.mul(gasLimite);
     document.getElementById('gas-estimado-valor').textContent =
-      parseFloat(ethers.utils.formatEther(costoTotal)).toFixed(6) + ' MATIC';
+      parseFloat(ethers.utils.formatEther(costo)).toFixed(6) + ' MATIC';
   } catch (err) {
-    console.error(err);
-    document.getElementById('gas-estimado-valor').textContent = 'No se pudo estimar';
+    document.getElementById('gas-estimado-valor').textContent = 'Error';
   }
 }
 
+// ================================================================
+// GRÁFICO - CONTRASTE MEJORADO
+// ================================================================
 function inicializarGrafico() {
   chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
-    layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
-    grid: { vertLines: { color: '#241d18' }, horzLines: { color: '#241d18' } },
-    timeScale: { borderColor: '#3a2f26' },
-    rightPriceScale: { borderColor: '#3a2f26' },
+    layout: { 
+      background: { color: '#0f0c0a' }, 
+      textColor: '#8a7a6a' 
+    },
+    grid: { 
+      vertLines: { color: '#1a1512' }, 
+      horzLines: { color: '#1a1512' } 
+    },
+    timeScale: { borderColor: '#1f1a16' },
+    rightPriceScale: { borderColor: '#1f1a16' },
   });
   seriesVelas = chart.addCandlestickSeries({
-    upColor: '#3fae6a', downColor: '#e0483e',
-    borderVisible: false,
-    wickUpColor: '#3fae6a', wickDownColor: '#e0483e',
+    upColor: '#2ecc71',
+    downColor: '#e74c3c',
+    borderUpColor: '#2ecc71',
+    borderDownColor: '#e74c3c',
+    wickUpColor: '#2ecc71',
+    wickDownColor: '#e74c3c',
+    borderVisible: true,
   });
 
   chartIndicador = LightweightCharts.createChart(document.getElementById('indicador-container'), {
-    layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
-    grid: { vertLines: { color: '#241d18' }, horzLines: { color: '#241d18' } },
+    layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
+    grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
     timeScale: { visible: false },
+    rightPriceScale: { visible: false },
   });
-  seriesIndicador = chartIndicador.addLineSeries({ color: '#c9a876', lineWidth: 2 });
+  seriesIndicador = chartIndicador.addLineSeries({ 
+    color: '#d4af7a', 
+    lineWidth: 2,
+    crosshairMarkerVisible: false,
+  });
 
   chart.timeScale().subscribeVisibleLogicalRangeChange(range => {
     chartIndicador.timeScale().setVisibleLogicalRange(range);
   });
 }
 
+// ================================================================
+// DATOS MOCK
+// ================================================================
 async function cargarVelasDesdeSupabase(timeframe) {
-  return generarVelasMock(60);
+  return generarVelasMock(80);
 }
 
 function generarVelasMock(n) {
   const velas = [];
   let precio = 6.30;
   const ahora = Math.floor(Date.now() / 1000);
+  const intervalo = 86400;
   for (let i = n; i > 0; i--) {
     const open = precio;
-    const close = open + (Math.random() - 0.5) * 0.15;
-    const high = Math.max(open, close) + Math.random() * 0.05;
-    const low = Math.min(open, close) - Math.random() * 0.05;
-    velas.push({ time: ahora - i * 86400, open, high, low, close });
+    const close = open + (Math.random() - 0.5) * 0.25;
+    const high = Math.max(open, close) + Math.random() * 0.08;
+    const low = Math.min(open, close) - Math.random() * 0.08;
+    velas.push({ time: ahora - i * intervalo, open, high, low, close });
     precio = close;
   }
   return velas;
@@ -558,19 +880,17 @@ function calcularIndicadorRSL(velas, periodo = 14) {
   return resultado;
 }
 
-function suscribirsePreciosTiempoReal() {
-  document.getElementById('estado-conexion').textContent = '● Datos simulados (conecta tu API)';
-}
-
+// ================================================================
+// PORTAFOLIO
+// ================================================================
 async function cargarOrdenesAbiertas() {
-  const ordenesMock = [];
-  renderizarOrdenesAbiertas(ordenesMock);
+  renderizarOrdenesAbiertas([]);
 }
 
 function renderizarOrdenesAbiertas(ordenes) {
   const contenedor = document.getElementById('contenido-portafolio');
   if (panelPortafolioActivo !== 'ordenes') return;
-  if (ordenes.length === 0) {
+  if (!ordenes || ordenes.length === 0) {
     contenedor.innerHTML = '<p class="vacio-portafolio">No tienes órdenes abiertas.</p>';
     return;
   }
@@ -583,36 +903,39 @@ function renderizarOrdenesAbiertas(ordenes) {
 }
 
 async function cancelarOrden(ordenId) {
-  console.log('TODO_API: cancelar orden', ordenId);
-  alert('Simulado: orden cancelada. Conecta cancelarOrden() a tu tabla real.');
+  alert('Simulado: orden cancelada.');
   await cargarOrdenesAbiertas();
 }
 
 async function cargarHistorialTransacciones() {
-  const historialMock = [];
-  renderizarHistorial(historialMock);
+  renderizarHistorial([]);
 }
 
 function renderizarHistorial(historial) {
   const contenedor = document.getElementById('contenido-portafolio');
   if (panelPortafolioActivo !== 'historial') return;
-  if (historial.length === 0) {
-    contenedor.innerHTML = '<p class="vacio-portafolio">Sin transacciones registradas todavía.</p>';
+  if (!historial || historial.length === 0) {
+    contenedor.innerHTML = '<p class="vacio-portafolio">Sin transacciones registradas.</p>';
     return;
   }
   contenedor.innerHTML = historial.map(tx => `
     <div class="tx-item">
       <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '↑' : '↓'} ${tx.cantidad_tok} TOK</span>
-      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver en explorador</a>` : ''}
+      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver</a>` : ''}
     </div>
   `).join('');
 }
 
+// ================================================================
+// EJECUTAR ORDEN
+// ================================================================
 async function ejecutarOrden(tipo, cantidad, precio) {
-  console.log(`TODO_API: ejecutar ${tipo} de ${cantidad} TOK a ${precio}`);
-  alert(`Simulado: ${tipo} de ${cantidad} TOK. Conecta ejecutarOrden() a tu API/contrato real.`);
+  alert(`Simulado: ${tipo} de ${cantidad} TOK a ${precio}`);
 }
 
+// ================================================================
+// RENDERIZAR TODO
+// ================================================================
 async function cargarYRenderizarTodo(timeframe) {
   const velas = await cargarVelasDesdeSupabase(timeframe);
   seriesVelas.setData(velas);
@@ -621,7 +944,7 @@ async function cargarYRenderizarTodo(timeframe) {
   seriesIndicador.setData(indicador);
 
   const ultima = velas[velas.length - 1];
-  const anterior = velas[velas.length - 2];
+  const anterior = velas[velas.length - 2] || ultima;
   const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
 
   document.getElementById('precio-actual').textContent = ultima.close.toFixed(4);
@@ -630,11 +953,12 @@ async function cargarYRenderizarTodo(timeframe) {
   elCambio.className = 'cambio-pct ' + (cambio >= 0 ? 'up' : 'down');
 
   document.getElementById('input-precio').value = ultima.close.toFixed(4);
-  document.getElementById('estado-conexion').classList.add('conectado');
-
   chart.timeScale().fitContent();
 }
 
+// ================================================================
+// EVENTOS UI
+// ================================================================
 document.getElementById('tab-comprar').addEventListener('click', () => {
   modoActual = 'compra';
   document.getElementById('tab-comprar').classList.add('activo');
@@ -693,10 +1017,13 @@ document.querySelectorAll('.tab-portafolio').forEach(btn => {
 
 document.getElementById('btn-conectar-wallet').addEventListener('click', conectarMetaMask);
 
+// ================================================================
+// INICIO
+// ================================================================
 window.addEventListener('DOMContentLoaded', () => {
   inicializarGrafico();
   cargarYRenderizarTodo(timeframeActual);
-  suscribirsePreciosTiempoReal();
+  document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Datos simulados (conecta tu API)';
 });
 </script>
 </body>
