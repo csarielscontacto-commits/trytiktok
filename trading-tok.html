@@ -1,4 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading TOK — Sariel's Ecosystem</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="base-datos-centralizada.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --masa:#1a1512; --trigo:#c9a876; --horno:#e85d3d;
+    --verde:#3fae6a; --rojo:#e0483e; --panel:#241d18; --texto:#f0e6d8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--masa); color:var(--texto); font-family:'Inter',sans-serif;}
+  h1,h2{font-family:'Fraunces',serif;}
+  .header{padding:16px 20px; border-bottom:1px solid #3a2f26;}
+  .header h1{font-size:1.3rem; color:var(--trigo);}
+  .precio-actual{font-size:1.8rem; font-weight:600;}
+  .cambio-pct{font-size:0.9rem; padding:2px 8px; border-radius:6px; margin-left:8px;}
+  .cambio-pct.up{background:rgba(63,174,106,0.15); color:var(--verde);}
+  .cambio-pct.down{background:rgba(224,72,62,0.15); color:var(--rojo);}
+  #chart-container{width:100%; height:340px;}
+  #indicador-container{width:100%; height:120px; border-top:1px solid #3a2f26;}
+  .timeframes{display:flex; gap:8px; padding:10px 20px;}
+  .timeframes button{background:var(--panel); border:1px solid #3a2f26; color:var(--texto);
+    padding:6px 14px; border-radius:8px; font-size:0.85rem;}
+  .timeframes button.activo{background:var(--horno); border-color:var(--horno); color:#fff;}
+  .panel-operar{padding:16px 20px; background:var(--panel); margin:16px; border-radius:14px;}
+  .tabs-operar{display:flex; gap:0; margin-bottom:14px; border-radius:10px; overflow:hidden;}
+  .tab-btn{flex:1; padding:10px; text-align:center; background:#2e2620; border:none; color:var(--texto);}
+  .tab-btn.comprar.activo{background:var(--verde); color:#fff;}
+  .tab-btn.vender.activo{background:var(--rojo); color:#fff;}
+  .campo{margin-bottom:12px;}
+  .campo label{display:block; font-size:0.8rem; color:#a89882; margin-bottom:4px;}
+  .campo input{width:100%; padding:10px; background:#1a1512; border:1px solid #3a2f26;
+    border-radius:8px; color:var(--texto); font-size:1rem;}
+  .btn-ejecutar{width:100%; padding:14px; border:none; border-radius:10px; font-weight:600;
+    font-size:1rem; color:#fff;}
+  .btn-ejecutar.comprar{background:var(--verde);}
+  .btn-ejecutar.vender{background:var(--rojo);}
+  .estado-conexion{font-size:0.75rem; color:#a89882; padding:0 20px 10px;}
+  .estado-conexion.conectado{color:var(--verde);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>TOK / Sariel's Token</h1>
+  <div>
+    <span class="precio-actual" id="precio-actual">--</span>
+    <span class="cambio-pct" id="cambio-pct">--</span>
+  </div>
+</div>
+
+<div class="estado-conexion" id="estado-conexion">● Conectando a datos...</div>
+
+<div class="timeframes">
+  <button data-tf="1m">1m</button>
+  <button data-tf="1h">1h</button>
+  <button data-tf="1d" class="activo">1d</button>
+</div>
+
+<div id="chart-container"></div>
+<div id="indicador-container"></div>
+
+<div class="panel-operar">
+  <div class="tabs-operar">
+    <button class="tab-btn comprar activo" id="tab-comprar">Comprar</button>
+    <button class="tab-btn vender" id="tab-vender">Vender</button>
+  </div>
+
+  <div class="campo">
+    <label>Cantidad de TOK</label>
+    <input type="number" id="input-cantidad" placeholder="0.00" min="0" step="0.01">
+  </div>
+  <div class="campo">
+    <label>Precio unitario (referencia)</label>
+    <input type="number" id="input-precio" placeholder="0.00" min="0" step="0.0001">
+  </div>
+  <div class="campo">
+    <label>Total estimado</label>
+    <input type="text" id="input-total" placeholder="0.00" disabled>
+  </div>
+
+  <button class="btn-ejecutar comprar" id="btn-ejecutar">Ejecutar compra</button>
+</div>
+
+<script>
+let modoActual = 'compra';
+let timeframeActual = '1d';
+let chart, seriesVelas, chartIndicador, seriesIndicador;
+
+function inicializarGrafico() {
+  chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
+    layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
+    grid: { vertLines: { color: '#241d18' }, horzLines: { color: '#241d18' } },
+    timeScale: { borderColor: '#3a2f26' },
+    rightPriceScale: { borderColor: '#3a2f26' },
+  });
+  seriesVelas = chart.addCandlestickSeries({
+    upColor: '#3fae6a', downColor: '#e0483e',
+    borderVisible: false,
+    wickUpColor: '#3fae6a', wickDownColor: '#e0483e',
+  });
+
+  chartIndicador = LightweightCharts.createChart(document.getElementById('indicador-container'), {
+    layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
+    grid: { vertLines: { color: '#241d18' }, horzLines: { color: '#241d18' } },
+    timeScale: { visible: false },
+  });
+  seriesIndicador = chartIndicador.addLineSeries({ color: '#c9a876', lineWidth: 2 });
+
+  chart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+    chartIndicador.timeScale().setVisibleLogicalRange(range);
+  });
+}
+
+async function cargarVelasDesdeSupabase(timeframe) {
+  return generarVelasMock(60);
+}
+
+function generarVelasMock(n) {
+  const velas = [];
+  let precio = 6.30;
+  const ahora = Math.floor(Date.now() / 1000);
+  for (let i = n; i > 0; i--) {
+    const open = precio;
+    const close = open + (Math.random() - 0.5) * 0.15;
+    const high = Math.max(open, close) + Math.random() * 0.05;
+    const low = Math.min(open, close) - Math.random() * 0.05;
+    velas.push({ time: ahora - i * 86400, open, high, low, close });
+    precio = close;
+  }
+  return velas;
+}
+
+function calcularIndicadorRSL(velas, periodo = 14) {
+  const resultado = [];
+  for (let i = periodo; i < velas.length; i++) {
+    const promedio = velas.slice(i - periodo, i).reduce((s, v) => s + v.close, 0) / periodo;
+    const rsl = (velas[i].close - promedio) / promedio;
+    resultado.push({ time: velas[i].time, value: rsl });
+  }
+  return resultado;
+}
+
+function suscribirsePreciosTiempoReal() {
+  document.getElementById('estado-conexion').textContent = '● Datos simulados (conecta tu API)';
+}
+
+async function ejecutarOrden(tipo, cantidad, precio) {
+  console.log(`TODO_API: ejecutar ${tipo} de ${cantidad} TOK a ${precio}`);
+  alert(`Simulado: ${tipo} de ${cantidad} TOK. Conecta ejecutarOrden() a tu API real.`);
+}
+
+async function cargarYRenderizarTodo(timeframe) {
+  const velas = await cargarVelasDesdeSupabase(timeframe);
+  seriesVelas.setData(velas);
+
+  const indicador = calcularIndicadorRSL(velas);
+  seriesIndicador.setData(indicador);
+
+  const ultima = velas[velas.length - 1];
+  const anterior = velas[velas.length - 2];
+  const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
+
+  document.getElementById('precio-actual').textContent = ultima.close.toFixed(4);
+  const elCambio = document.getElementById('cambio-pct');
+  elCambio.textContent = `${cambio >= 0 ? '+' : ''}${cambio.toFixed(2)}%`;
+  elCambio.className = 'cambio-pct ' + (cambio >= 0 ? 'up' : 'down');
+
+  document.getElementById('input-precio').value = ultima.close.toFixed(4);
+  document.getElementById('estado-conexion').classList.add('conectado');
+
+  chart.timeScale().fitContent();
+}
+
+document.getElementById('tab-comprar').addEventListener('click', () => {
+  modoActual = 'compra';
+  document.getElementById('tab-comprar').classList.add('activo');
+  document.getElementById('tab-vender').classList.remove('activo');
+  const btn = document.getElementById('btn-ejecutar');
+  btn.textContent = 'Ejecutar compra';
+  btn.className = 'btn-ejecutar comprar';
+});
+
+document.getElementById('tab-vender').addEventListener('click', () => {
+  modoActual = 'venta';
+  document.getElementById('tab-vender').classList.add('activo');
+  document.getElementById('tab-comprar').classList.remove('activo');
+  const btn = document.getElementById('btn-ejecutar');
+  btn.textContent = 'Ejecutar venta';
+  btn.className = 'btn-ejecutar vender';
+});
+
+function actualizarTotal() {
+  const cantidad = parseFloat(document.getElementById('input-cantidad').value) || 0;
+  const precio = parseFloat(document.getElementById('input-precio').value) || 0;
+  document.getElementById('input-total').value = (cantidad * precio).toFixed(4);
+}
+document.getElementById('input-cantidad').addEventListener('input', actualizarTotal);
+document.getElementById('input-precio').addEventListener('input', actualizarTotal);
+
+document.getElementById('btn-ejecutar').addEventListener('click', () => {
+  const cantidad = parseFloat(document.getElementById('input-cantidad').value);
+  const precio = parseFloat(document.getElementById('input-precio').value);
+  if (!cantidad || cantidad <= 0) { alert('Ingresa una cantidad válida'); return; }
+  ejecutarOrden(modoActual, cantidad, precio);
+});
+
+document.querySelectorAll('.timeframes button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timeframes button').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    timeframeActual = btn.dataset.tf;
+    cargarYRenderizarTodo(timeframeActual);
+  });
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  inicializarGrafico();
+  cargarYRenderizarTodo(timeframeActual);
+  suscribirsePreciosTiempoReal();
+});
+</script>
+</body>
+  </html>
