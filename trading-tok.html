@@ -71,6 +71,32 @@
     padding:4px 10px; border-radius:6px; font-size:0.75rem;}
   .tx-link{color:var(--trigo); font-size:0.75rem; text-decoration:underline;}
   .vacio-portafolio{color:#a89882; font-size:0.85rem; text-align:center; padding:10px 0;}
+
+  /* Footer y enlace de aviso legal */
+  .footer-legal{text-align:center; padding:20px; margin-top:8px;}
+  .link-legal{color:#a89882; font-size:0.8rem; text-decoration:underline; background:none; border:none; cursor:pointer;}
+
+  /* Modal de aviso legal */
+  .modal-overlay{
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.65); z-index:1000;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.activo{display:flex;}
+  .modal-caja{
+    background:var(--panel); border-radius:14px; max-width:480px; width:100%;
+    max-height:80vh; overflow-y:auto; position:relative; padding:24px 20px;
+    border:1px solid #3a2f26;
+  }
+  .modal-cerrar{
+    position:absolute; top:14px; right:14px; background:#1a1512; border:1px solid #3a2f26;
+    color:var(--texto); width:32px; height:32px; border-radius:50%; font-size:1rem;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .modal-titulo{font-family:'Fraunces',serif; color:var(--trigo); font-size:1.2rem;
+    margin-bottom:16px; padding-right:30px;}
+  .modal-punto{margin-bottom:14px; font-size:0.9rem; line-height:1.5; color:var(--texto);}
+  .modal-punto strong{color:var(--trigo);}
 </style>
 </head>
 <body>
@@ -152,6 +178,21 @@
   </div>
 </div>
 
+<div class="footer-legal">
+  <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos</button>
+</div>
+
+<!-- Modal de Aviso Legal -->
+<div class="modal-overlay" id="modal-legal-overlay">
+  <div class="modal-caja">
+    <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
+    <h2 class="modal-titulo">Términos de Redención de TOK</h2>
+    <p class="modal-punto"><strong>1.</strong> Cada TOK otorga un derecho de redención comercial fijo y garantizado de $5.00 MXN, aplicable exclusivamente como descuento en la compra de domos de galleta de la marca.</p>
+    <p class="modal-punto"><strong>2.</strong> El precio reflejado en el gráfico y el panel de trading es un valor de mercado secundario, determinado de forma libre y exclusiva por la oferta y la demanda entre los propios usuarios del ecosistema.</p>
+    <p class="modal-punto"><strong>3.</strong> El valor de intercambio en el panel puede fluctuar por encima o por debajo del valor de redención comercial, siendo responsabilidad única del usuario las operaciones de compra o venta que decida ejecutar con otros miembros de la comunidad.</p>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    TRADING TOK — Sariel's Ecosystem
@@ -166,7 +207,21 @@ let walletConectada = null;
 let providerEthers = null;
 let panelPortafolioActivo = 'ordenes';
 
-const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/"; // Testnet Polygon Amoy
+const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
+
+// ---------- Modal de Aviso Legal ----------
+const modalOverlay = document.getElementById('modal-legal-overlay');
+document.getElementById('btn-abrir-legal').addEventListener('click', () => {
+  modalOverlay.classList.add('activo');
+});
+document.getElementById('modal-cerrar-btn').addEventListener('click', () => {
+  modalOverlay.classList.remove('activo');
+});
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) {
+    modalOverlay.classList.remove('activo');
+  }
+});
 
 // ---------- Wallet MetaMask ----------
 async function conectarMetaMask() {
@@ -180,7 +235,7 @@ async function conectarMetaMask() {
 
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x13882' }] // Polygon Amoy = 80002
+      params: [{ chainId: '0x13882' }]
     });
 
     providerEthers = new ethers.providers.Web3Provider(window.ethereum);
@@ -199,20 +254,17 @@ async function conectarMetaMask() {
   }
 }
 
-// TODO_API: reemplaza con tus contratos reales
 const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000"; // TODO_API
-const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000"; // TODO_API (USDT/USDC)
+const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000"; // TODO_API
 const ABI_ERC20_MINIMO = [
   "function balanceOf(address owner) view returns (uint256)",
   "function decimals() view returns (uint8)",
   "function transfer(address to, uint256 amount) returns (bool)"
 ];
 
-// ---------- Saldos: TOK, moneda de pago, y MATIC para gas ----------
 async function actualizarSaldos() {
   if (!providerEthers) return;
 
-  // MATIC nativo (para gas)
   try {
     const balanceNativo = await providerEthers.getBalance(walletConectada);
     document.getElementById('saldo-matic').textContent =
@@ -221,7 +273,6 @@ async function actualizarSaldos() {
     document.getElementById('saldo-matic').textContent = 'Error';
   }
 
-  // TOK
   if (DIRECCION_CONTRATO_TOK !== "0x0000000000000000000000000000000000000000") {
     try {
       const contratoTok = new ethers.Contract(DIRECCION_CONTRATO_TOK, ABI_ERC20_MINIMO, providerEthers);
@@ -235,13 +286,12 @@ async function actualizarSaldos() {
     document.getElementById('saldo-tok').textContent = 'Sin conectar';
   }
 
-  // Moneda de pago (USDT/USDC)
   if (DIRECCION_CONTRATO_PAGO !== "0x0000000000000000000000000000000000000000") {
     try {
       const contratoPago = new ethers.Contract(DIRECCION_CONTRATO_PAGO, ABI_ERC20_MINIMO, providerEthers);
       const balance = await contratoPago.balanceOf(walletConectada);
       document.getElementById('saldo-usdt').textContent =
-        parseFloat(ethers.utils.formatUnits(balance, 6)).toFixed(2); // USDT suele usar 6 decimales
+        parseFloat(ethers.utils.formatUnits(balance, 6)).toFixed(2);
     } catch (err) {
       document.getElementById('saldo-usdt').textContent = 'Error';
     }
@@ -250,7 +300,6 @@ async function actualizarSaldos() {
   }
 }
 
-// ---------- Estimar costo de gas antes de ejecutar ----------
 async function estimarGas() {
   if (!providerEthers) {
     document.getElementById('gas-estimado-valor').textContent = 'Conecta tu wallet primero';
@@ -258,7 +307,7 @@ async function estimarGas() {
   }
   try {
     const gasPrice = await providerEthers.getGasPrice();
-    const gasLimiteAproximado = ethers.BigNumber.from("65000"); // TODO_API: ajusta según tu contrato real
+    const gasLimiteAproximado = ethers.BigNumber.from("65000");
     const costoTotal = gasPrice.mul(gasLimiteAproximado);
     document.getElementById('gas-estimado-valor').textContent =
       parseFloat(ethers.utils.formatEther(costoTotal)).toFixed(6) + ' MATIC';
@@ -268,7 +317,6 @@ async function estimarGas() {
   }
 }
 
-// ---------- Gráfico ----------
 function inicializarGrafico() {
   chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
     layout: { background: { color: '#1a1512' }, textColor: '#f0e6d8' },
@@ -295,7 +343,6 @@ function inicializarGrafico() {
 }
 
 async function cargarVelasDesdeSupabase(timeframe) {
-  // TODO_API: reemplaza con consulta real a window.bd (ver ejemplo dado antes)
   return generarVelasMock(60);
 }
 
@@ -328,16 +375,8 @@ function suscribirsePreciosTiempoReal() {
   document.getElementById('estado-conexion').textContent = '● Datos simulados (conecta tu API)';
 }
 
-// ---------- Órdenes abiertas ----------
 async function cargarOrdenesAbiertas() {
-  // TODO_API: reemplaza con consulta real
-  // const { data } = await window.bd.supabase
-  //   .from('tok_ordenes')
-  //   .select('*')
-  //   .eq('estado', 'pendiente')
-  //   .order('created_at', { ascending: false });
-
-  const ordenesMock = []; // vacío hasta conectar Supabase real
+  const ordenesMock = [];
   renderizarOrdenesAbiertas(ordenesMock);
 }
 
@@ -357,23 +396,13 @@ function renderizarOrdenesAbiertas(ordenes) {
 }
 
 async function cancelarOrden(ordenId) {
-  // TODO_API: actualizar estado a 'cancelada' en Supabase
   console.log('TODO_API: cancelar orden', ordenId);
   alert('Simulado: orden cancelada. Conecta cancelarOrden() a tu tabla real.');
   await cargarOrdenesAbiertas();
 }
 
-// ---------- Historial de transacciones ----------
 async function cargarHistorialTransacciones() {
-  // TODO_API: reemplaza con consulta real
-  // const { data } = await window.bd.supabase
-  //   .from('tok_ordenes')
-  //   .select('*')
-  //   .eq('estado', 'ejecutada')
-  //   .order('created_at', { ascending: false })
-  //   .limit(20);
-
-  const historialMock = []; // vacío hasta conectar Supabase real
+  const historialMock = [];
   renderizarHistorial(historialMock);
 }
 
@@ -392,17 +421,11 @@ function renderizarHistorial(historial) {
   `).join('');
 }
 
-// ---------- Ejecutar orden ----------
 async function ejecutarOrden(tipo, cantidad, precio) {
-  // TODO_API: aquí conectas la orden a tu tabla tok_ordenes en Supabase
-  // y, si quieres que mueva tokens de verdad, la llamada real a tu
-  // contrato SARIEL_TOK (función transfer) usando ethers, capturando
-  // el tx.hash resultante para guardarlo en tx_hash.
   console.log(`TODO_API: ejecutar ${tipo} de ${cantidad} TOK a ${precio}`);
   alert(`Simulado: ${tipo} de ${cantidad} TOK. Conecta ejecutarOrden() a tu API/contrato real.`);
 }
 
-// ---------- Render principal del gráfico ----------
 async function cargarYRenderizarTodo(timeframe) {
   const velas = await cargarVelasDesdeSupabase(timeframe);
   seriesVelas.setData(velas);
@@ -425,7 +448,6 @@ async function cargarYRenderizarTodo(timeframe) {
   chart.timeScale().fitContent();
 }
 
-// ---------- UI: tabs comprar/vender ----------
 document.getElementById('tab-comprar').addEventListener('click', () => {
   modoActual = 'compra';
   document.getElementById('tab-comprar').classList.add('activo');
@@ -444,7 +466,6 @@ document.getElementById('tab-vender').addEventListener('click', () => {
   btn.className = 'btn-ejecutar vender';
 });
 
-// ---------- UI: cálculo de total + gas ----------
 function actualizarTotal() {
   const cantidad = parseFloat(document.getElementById('input-cantidad').value) || 0;
   const precio = parseFloat(document.getElementById('input-precio').value) || 0;
@@ -454,7 +475,6 @@ function actualizarTotal() {
 document.getElementById('input-cantidad').addEventListener('input', actualizarTotal);
 document.getElementById('input-precio').addEventListener('input', actualizarTotal);
 
-// ---------- UI: ejecutar orden ----------
 document.getElementById('btn-ejecutar').addEventListener('click', () => {
   const cantidad = parseFloat(document.getElementById('input-cantidad').value);
   const precio = parseFloat(document.getElementById('input-precio').value);
@@ -462,7 +482,6 @@ document.getElementById('btn-ejecutar').addEventListener('click', () => {
   ejecutarOrden(modoActual, cantidad, precio);
 });
 
-// ---------- UI: cambio de timeframe ----------
 document.querySelectorAll('.timeframes button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.timeframes button').forEach(b => b.classList.remove('activo'));
@@ -472,7 +491,6 @@ document.querySelectorAll('.timeframes button').forEach(btn => {
   });
 });
 
-// ---------- UI: tabs del panel de portafolio ----------
 document.querySelectorAll('.tab-portafolio').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-portafolio').forEach(b => b.classList.remove('activo'));
@@ -486,10 +504,8 @@ document.querySelectorAll('.tab-portafolio').forEach(btn => {
   });
 });
 
-// ---------- Wallet ----------
 document.getElementById('btn-conectar-wallet').addEventListener('click', conectarMetaMask);
 
-// ---------- Arranque ----------
 window.addEventListener('DOMContentLoaded', () => {
   inicializarGrafico();
   cargarYRenderizarTodo(timeframeActual);
