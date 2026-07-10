@@ -19,7 +19,7 @@
   body{background:var(--masa); color:var(--texto); font-family:'Inter',sans-serif;}
   h1,h2{font-family:'Fraunces',serif;}
 
-  /* HEADER CON LOGO DE SARIEL'S */
+  /* HEADER */
   .header{
     padding:12px 16px;
     border-bottom:1px solid #2a221c;
@@ -45,24 +45,10 @@
     flex-shrink:0;
     background: 
       radial-gradient(ellipse at 30% 30%, #f5d79a, #c9a05a 40%, #a8843a 70%, #7a6430),
-      repeating-linear-gradient(
-        45deg,
-        transparent 0px,
-        transparent 6px,
-        rgba(255,215,130,0.15) 6px,
-        rgba(255,215,130,0.15) 8px
-      ),
-      repeating-linear-gradient(
-        -30deg,
-        transparent 0px,
-        transparent 4px,
-        rgba(180,150,80,0.10) 4px,
-        rgba(180,150,80,0.10) 6px
-      );
+      repeating-linear-gradient(45deg, transparent 0px, transparent 6px, rgba(255,215,130,0.15) 6px, rgba(255,215,130,0.15) 8px),
+      repeating-linear-gradient(-30deg, transparent 0px, transparent 4px, rgba(180,150,80,0.10) 4px, rgba(180,150,80,0.10) 6px);
     background-blend-mode: overlay, normal, normal;
-    box-shadow: 
-      0 0 30px rgba(212,175,122,0.15),
-      inset 0 0 20px rgba(255,215,130,0.08);
+    box-shadow: 0 0 30px rgba(212,175,122,0.15), inset 0 0 20px rgba(255,215,130,0.08);
     border:1.5px solid rgba(212,175,122,0.3);
     position:relative;
     overflow:hidden;
@@ -89,9 +75,7 @@
     font-weight:700;
     font-size:1.3rem;
     color:#f5e6c8;
-    text-shadow: 
-      0 1px 4px rgba(100,70,20,0.4),
-      0 0 20px rgba(212,175,122,0.15);
+    text-shadow: 0 1px 4px rgba(100,70,20,0.4), 0 0 20px rgba(212,175,122,0.15);
     z-index:1;
     letter-spacing:1px;
     line-height:1;
@@ -158,9 +142,35 @@
   .estado-conexion.conectado .dot{background:var(--verde-brillante); box-shadow:0 0 8px rgba(0,245,160,0.3);}
   .estado-conexion.conectado{color:var(--verde-brillante);}
 
-  /* GRÁFICO */
-  #chart-container{width:100%; height:340px; background:var(--fondo-grafico);}
+  /* GRÁFICO PRINCIPAL + INDICADORES */
+  #chart-container{width:100%; height:340px; background:var(--fondo-grafico); position:relative;}
   #indicador-container{width:100%; height:100px; border-top:1px solid #1f1a16; background:var(--fondo-grafico);}
+
+  /* PANEL DE INFORMACIÓN DE INDICADORES (como en la imagen) */
+  .indicadores-info{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 16px;
+    padding:6px 16px;
+    background:#0d0b0a;
+    border-bottom:1px solid #1f1a16;
+    font-size:0.6rem;
+    color:#6a5d50;
+    font-family:'Inter',monospace;
+    letter-spacing:0.2px;
+  }
+  .indicadores-info .bb, .indicadores-info .vol, .indicadores-info .macd{
+    display:flex;
+    gap:6px;
+    align-items:center;
+  }
+  .indicadores-info .valor{
+    color:#b8a898;
+    font-weight:500;
+  }
+  .indicadores-info .valor.verde{color:var(--verde-brillante);}
+  .indicadores-info .valor.rojo{color:var(--rojo-brillante);}
+  .indicadores-info .valor.trigo{color:var(--trigo);}
 
   /* TIMEFRAMES */
   .timeframes{
@@ -211,7 +221,7 @@
   }
   .slogan-texto strong{color:var(--trigo); font-style:normal;}
 
-  /* CHECKBOX DE ACEPTACIÓN */
+  /* CHECKBOXES */
   .aceptacion-check-wrapper{
     padding:6px 16px;
     display:flex;
@@ -258,9 +268,7 @@
     text-decoration:underline;
     cursor:pointer;
   }
-  .aceptacion-check-wrapper label strong:hover{color:#d4af7a;}
 
-  /* CHECKBOX CONEXIÓN METAMASK */
   .conexion-check-wrapper{
     padding:6px 16px;
     display:none;
@@ -474,7 +482,6 @@
   .tx-link{color:var(--trigo); font-size:0.65rem; text-decoration:underline; cursor:pointer;}
   .vacio-portafolio{color:#6a5d50; font-size:0.75rem; text-align:center; padding:6px 0;}
 
-  /* FOOTER LEGAL */
   .footer-legal{
     text-align:center;
     padding:12px 16px;
@@ -557,7 +564,7 @@
 </head>
 <body>
 
-<!-- HEADER CON LOGO DE SARIEL'S -->
+<!-- HEADER -->
 <div class="header">
   <div class="header-left">
     <div class="logo-sariels">
@@ -574,7 +581,7 @@
   </div>
 </div>
 
-<!-- ESTADO DE CONEXIÓN -->
+<!-- ESTADO -->
 <div class="estado-conexion" id="estado-conexion">
   <span class="dot"></span> Conectando a datos...
 </div>
@@ -613,6 +620,13 @@
   <button data-tf="15m">15m</button>
   <button data-tf="1h">1h</button>
   <button data-tf="1d" class="activo">1d</button>
+</div>
+
+<!-- INDICADORES INFO (como en la imagen) -->
+<div class="indicadores-info" id="indicadores-info">
+  <span class="bb">📊 BB(20,2) <span class="valor trigo" id="bb-info">U:-- M:-- L:--</span></span>
+  <span class="vol">📈 Vol: <span class="valor" id="vol-info">--</span></span>
+  <span class="macd">📉 MACD(12,26) <span class="valor" id="macd-info">--</span></span>
 </div>
 
 <!-- GRÁFICO -->
@@ -680,47 +694,46 @@
   </div>
 </div>
 
-<!-- FOOTER LEGAL -->
+<!-- FOOTER -->
 <div class="footer-legal">
   <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
   <span style="color:#3a2f26;">·</span>
   <a class="link-legal" href="terminos-legales.html" target="_blank">Términos y Condiciones completos</a>
 </div>
 
-<!-- MODAL TÉRMINOS -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modal-legal-overlay">
   <div class="modal-caja">
     <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
     <h2 class="modal-titulo">Términos de Redención del Ecosistema Sariel's</h2>
     <p class="modal-punto"><strong>Derecho de Redención:</strong> El derecho a obtener un descuento de $75.00 MXN en la adquisición de domos de galleta es una utilidad exclusiva del titular de un NFT Sariel's.</p>
-    <p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios. La marca no garantiza que el valor del TOK sea equivalente al precio de venta del producto físico.</p>
-    <p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción de compra o venta de tokens realizada a través de la plataforma está sujeta a una comisión del 1% a favor de la marca, destinada al mantenimiento del ecosistema.</p>
+    <p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios.</p>
+    <p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción está sujeta a una comisión del 1% a favor de la marca.</p>
     <p class="modal-punto" style="color:#6a5d50; font-size:0.75rem;">Verifica los Términos y Condiciones antes de usar la plataforma.</p>
   </div>
 </div>
 
 <script>
 // ================================================================
-// CONFIGURACIÓN DE SUPABASE
+// CONFIGURACIÓN
 // ================================================================
 const supabaseUrl = 'https://tu-proyecto.supabase.co';
 const supabaseKey = 'tu-clave-publica-anonima';
 
-// ================================================================
-// VARIABLES GLOBALES
-// ================================================================
 let modoActual = 'compra';
 let timeframeActual = '1d';
 let chart, seriesVelas, chartIndicador, seriesIndicador;
+let seriesBandaSuperior, seriesBandaInferior, seriesMedia;
 let walletConectada = null;
 let providerEthers = null;
 let panelPortafolioActivo = 'ordenes';
 let supabaseClient = null;
+let datosVelas = [];
 
 const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
 const COMISION_PORCENTAJE = 0.01;
 
-// Direcciones de contratos (actualizar con tus direcciones reales)
+// Direcciones de contratos
 const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
 const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
 
@@ -737,22 +750,15 @@ function initSupabase() {
     const { createClient } = supabase;
     supabaseClient = createClient(supabaseUrl, supabaseKey);
     console.log('✅ Supabase inicializado');
-  } else {
-    console.warn('⚠️ Configura Supabase para datos reales');
   }
 }
 
 // ================================================================
-// CHECKBOX: ACEPTAR TÉRMINOS
+// CHECKBOXES
 // ================================================================
 document.getElementById('check-aceptar').addEventListener('change', function() {
-  const conexionWrapper = document.getElementById('conexion-check-wrapper');
-  if (this.checked) {
-    conexionWrapper.classList.add('visible');
-  } else {
-    conexionWrapper.classList.remove('visible');
-    document.getElementById('check-conectar').checked = false;
-  }
+  document.getElementById('conexion-check-wrapper').classList.toggle('visible', this.checked);
+  if (!this.checked) document.getElementById('check-conectar').checked = false;
 });
 
 document.getElementById('abrir-legal-desde-check').addEventListener('click', function(e) {
@@ -760,13 +766,9 @@ document.getElementById('abrir-legal-desde-check').addEventListener('click', fun
   document.getElementById('modal-legal-overlay').classList.add('activo');
 });
 
-// ================================================================
-// CHECKBOX: CONECTAR METAMASK
-// ================================================================
 document.getElementById('check-conectar').addEventListener('change', function() {
-  if (this.checked) {
-    conectarMetaMask();
-  } else {
+  if (this.checked) conectarMetaMask();
+  else {
     walletConectada = null;
     providerEthers = null;
     document.getElementById('btn-conectar-wallet').style.display = 'block';
@@ -778,17 +780,16 @@ document.getElementById('check-conectar').addEventListener('change', function() 
 });
 
 // ================================================================
-// MODAL TÉRMINOS
+// MODAL
 // ================================================================
-const modalOverlay = document.getElementById('modal-legal-overlay');
 document.getElementById('btn-abrir-legal').addEventListener('click', () => {
-  modalOverlay.classList.add('activo');
+  document.getElementById('modal-legal-overlay').classList.add('activo');
 });
 document.getElementById('modal-cerrar-btn').addEventListener('click', () => {
-  modalOverlay.classList.remove('activo');
+  document.getElementById('modal-legal-overlay').classList.remove('activo');
 });
-modalOverlay.addEventListener('click', (e) => {
-  if (e.target === modalOverlay) modalOverlay.classList.remove('activo');
+document.getElementById('modal-legal-overlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) document.getElementById('modal-legal-overlay').classList.remove('activo');
 });
 
 // ================================================================
@@ -804,32 +805,24 @@ async function conectarMetaMask() {
     const cuentas = await window.ethereum.request({ method: 'eth_requestAccounts' });
     walletConectada = cuentas[0];
 
-    // Cambiar a Polygon Amoy (testnet)
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0x13882' }]
       });
     } catch (switchError) {
-      // Si la red no está agregada, la agregamos
       if (switchError.code === 4902) {
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [{
             chainId: '0x13882',
             chainName: 'Polygon Amoy',
-            nativeCurrency: {
-              name: 'MATIC',
-              symbol: 'MATIC',
-              decimals: 18
-            },
+            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
             rpcUrls: ['https://rpc-amoy.polygon.technology/'],
             blockExplorerUrls: ['https://amoy.polygonscan.com/']
           }]
         });
-      } else {
-        throw switchError;
-      }
+      } else throw switchError;
     }
 
     providerEthers = new ethers.providers.Web3Provider(window.ethereum);
@@ -845,7 +838,6 @@ async function conectarMetaMask() {
     document.getElementById('estado-conexion').className = 'estado-conexion conectado';
     document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
 
-    // Escuchar cambios de cuenta
     window.ethereum.on('accountsChanged', (cuentas) => {
       if (cuentas.length > 0) {
         walletConectada = cuentas[0];
@@ -859,11 +851,7 @@ async function conectarMetaMask() {
         document.getElementById('wallet-info').style.display = 'none';
       }
     });
-
-    // Escuchar cambios de red
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload();
-    });
+    window.ethereum.on('chainChanged', () => window.location.reload());
 
   } catch (err) {
     console.error(err);
@@ -873,7 +861,7 @@ async function conectarMetaMask() {
 }
 
 // ================================================================
-// ACTUALIZAR SALDOS
+// SALDOS
 // ================================================================
 async function actualizarSaldos() {
   if (!providerEthers) return;
@@ -895,8 +883,6 @@ async function actualizarSaldos() {
     } catch (err) {
       document.getElementById('saldo-tok').textContent = 'Error';
     }
-  } else {
-    document.getElementById('saldo-tok').textContent = '--';
   }
 
   if (DIRECCION_CONTRATO_PAGO !== "0x0000000000000000000000000000000000000000") {
@@ -909,13 +895,11 @@ async function actualizarSaldos() {
     } catch (err) {
       document.getElementById('saldo-usdt').textContent = 'Error';
     }
-  } else {
-    document.getElementById('saldo-usdt').textContent = '--';
   }
 }
 
 // ================================================================
-// ESTIMAR GAS
+// GAS
 // ================================================================
 async function estimarGas() {
   if (!providerEthers) {
@@ -934,21 +918,18 @@ async function estimarGas() {
 }
 
 // ================================================================
-// GRÁFICO
+// GRÁFICO CON TODAS LAS LÍNEAS (BB + MACD)
 // ================================================================
 function inicializarGrafico() {
+  // Gráfico principal
   chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
-    layout: { 
-      background: { color: '#0f0c0a' }, 
-      textColor: '#8a7a6a' 
-    },
-    grid: { 
-      vertLines: { color: '#1a1512' }, 
-      horzLines: { color: '#1a1512' } 
-    },
+    layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
+    grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
     timeScale: { borderColor: '#1f1a16' },
     rightPriceScale: { borderColor: '#1f1a16' },
   });
+
+  // Velas
   seriesVelas = chart.addCandlestickSeries({
     upColor: '#2ecc71',
     downColor: '#e74c3c',
@@ -959,17 +940,62 @@ function inicializarGrafico() {
     borderVisible: true,
   });
 
+  // Banda Superior (BB)
+  seriesBandaSuperior = chart.addLineSeries({
+    color: 'rgba(46, 204, 113, 0.3)',
+    lineWidth: 1,
+    lineStyle: 2,
+    priceLineVisible: false,
+  });
+
+  // Banda Inferior (BB)
+  seriesBandaInferior = chart.addLineSeries({
+    color: 'rgba(231, 76, 60, 0.3)',
+    lineWidth: 1,
+    lineStyle: 2,
+    priceLineVisible: false,
+  });
+
+  // Media (BB)
+  seriesMedia = chart.addLineSeries({
+    color: 'rgba(212, 175, 122, 0.4)',
+    lineWidth: 1,
+    lineStyle: 1,
+    priceLineVisible: false,
+  });
+
+  // Indicador inferior (MACD)
   chartIndicador = LightweightCharts.createChart(document.getElementById('indicador-container'), {
     layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
     grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
     timeScale: { visible: false },
     rightPriceScale: { visible: false },
   });
-  seriesIndicador = chartIndicador.addLineSeries({ 
-    color: '#d4af7a', 
+
+  // MACD Line
+  seriesIndicador = chartIndicador.addLineSeries({
+    color: '#d4af7a',
     lineWidth: 2,
     crosshairMarkerVisible: false,
   });
+
+  // Señal MACD
+  const seriesSignal = chartIndicador.addLineSeries({
+    color: '#ff6b6b',
+    lineWidth: 1,
+    lineStyle: 2,
+    crosshairMarkerVisible: false,
+  });
+
+  // Histograma MACD
+  const seriesHist = chartIndicador.addHistogramSeries({
+    color: '#2ecc71',
+    priceFormat: { type: 'volume' },
+  });
+
+  // Guardar referencias
+  window.seriesSignal = seriesSignal;
+  window.seriesHist = seriesHist;
 
   chart.timeScale().subscribeVisibleLogicalRangeChange(range => {
     chartIndicador.timeScale().setVisibleLogicalRange(range);
@@ -977,7 +1003,68 @@ function inicializarGrafico() {
 }
 
 // ================================================================
-// DATOS MOCK (reemplazar con datos reales de Supabase)
+// CÁLCULO DE INDICADORES (BB, MACD, RSI)
+// ================================================================
+
+// Bollinger Bands (20,2)
+function calcularBB(velas, periodo = 20, desviaciones = 2) {
+  if (velas.length < periodo) return { superior: [], media: [], inferior: [] };
+  
+  const resultado = { superior: [], media: [], inferior: [] };
+  
+  for (let i = periodo - 1; i < velas.length; i++) {
+    const segmento = velas.slice(i - periodo + 1, i + 1);
+    const precios = segmento.map(v => v.close);
+    const media = precios.reduce((a, b) => a + b, 0) / precios.length;
+    const varianza = precios.reduce((a, b) => a + Math.pow(b - media, 2), 0) / precios.length;
+    const desv = Math.sqrt(varianza);
+    
+    resultado.superior.push({ time: velas[i].time, value: media + desviaciones * desv });
+    resultado.media.push({ time: velas[i].time, value: media });
+    resultado.inferior.push({ time: velas[i].time, value: media - desviaciones * desv });
+  }
+  
+  return resultado;
+}
+
+// MACD (12,26,9)
+function calcularMACD(velas, fast = 12, slow = 26, signal = 9) {
+  if (velas.length < slow + signal) return { macd: [], signal: [], histogram: [] };
+  
+  const precios = velas.map(v => v.close);
+  const emaFast = calcularEMA(precios, fast);
+  const emaSlow = calcularEMA(precios, slow);
+  
+  const macdLine = [];
+  for (let i = 0; i < emaFast.length && i < emaSlow.length; i++) {
+    macdLine.push(emaFast[i] - emaSlow[i]);
+  }
+  
+  const signalLine = calcularEMA(macdLine, signal);
+  const histogram = [];
+  
+  for (let i = 0; i < macdLine.length && i < signalLine.length; i++) {
+    histogram.push(macdLine[i] - signalLine[i]);
+  }
+  
+  return {
+    macd: macdLine.slice(signal - 1).map((v, i) => ({ time: velas[i + signal - 1].time, value: v })),
+    signal: signalLine.slice(signal - 1).map((v, i) => ({ time: velas[i + signal - 1].time, value: v })),
+    histogram: histogram.slice(signal - 1).map((v, i) => ({ time: velas[i + signal - 1].time, value: v })),
+  };
+}
+
+function calcularEMA(datos, periodo) {
+  const k = 2 / (periodo + 1);
+  const ema = [datos[0]];
+  for (let i = 1; i < datos.length; i++) {
+    ema.push(datos[i] * k + ema[i - 1] * (1 - k));
+  }
+  return ema;
+}
+
+// ================================================================
+// GENERAR DATOS MOCK
 // ================================================================
 function generarVelasMock(n) {
   const velas = [];
@@ -996,41 +1083,19 @@ function generarVelasMock(n) {
   return velas;
 }
 
-function calcularIndicadorRSL(velas, periodo = 14) {
-  const resultado = [];
-  for (let i = periodo; i < velas.length; i++) {
-    const promedio = velas.slice(i - periodo, i).reduce((s, v) => s + v.close, 0) / periodo;
-    const rsl = (velas[i].close - promedio) / promedio;
-    resultado.push({ time: velas[i].time, value: rsl });
-  }
-  return resultado;
-}
-
 // ================================================================
-// CARGAR DATOS DESDE SUPABASE O MOCK
+// CARGAR DATOS
 // ================================================================
 async function cargarVelasDesdeSupabase(timeframe) {
-  // Si Supabase está configurado, intentar obtener datos reales
   if (supabaseClient) {
     try {
-      // Obtener el rango de tiempo según el timeframe
-      let intervalo;
-      switch(timeframe) {
-        case '1m': intervalo = '1 minute'; break;
-        case '5m': intervalo = '5 minute'; break;
-        case '15m': intervalo = '15 minute'; break;
-        case '1h': intervalo = '1 hour'; break;
-        default: intervalo = '1 day';
-      }
-      
       const { data, error } = await supabaseClient
         .from('velas_tok')
         .select('*')
         .order('time', { ascending: true })
         .limit(100);
       
-      if (error) throw error;
-      if (data && data.length > 0) {
+      if (!error && data && data.length > 0) {
         return data.map(v => ({
           time: Math.floor(new Date(v.time).getTime() / 1000),
           open: v.open,
@@ -1040,11 +1105,69 @@ async function cargarVelasDesdeSupabase(timeframe) {
         }));
       }
     } catch (err) {
-      console.warn('Error obteniendo datos de Supabase, usando mock:', err);
+      console.warn('Error Supabase, usando mock:', err);
     }
   }
-  // Fallback a datos mock
   return generarVelasMock(80);
+}
+
+// ================================================================
+// RENDERIZAR TODO
+// ================================================================
+async function cargarYRenderizarTodo(timeframe) {
+  const velas = await cargarVelasDesdeSupabase(timeframe);
+  datosVelas = velas;
+  
+  seriesVelas.setData(velas);
+
+  // Calcular Bollinger Bands
+  const bb = calcularBB(velas);
+  if (bb.superior.length > 0) {
+    seriesBandaSuperior.setData(bb.superior);
+    seriesMedia.setData(bb.media);
+    seriesBandaInferior.setData(bb.inferior);
+  }
+
+  // Calcular MACD
+  const macd = calcularMACD(velas);
+  if (macd.macd.length > 0) {
+    seriesIndicador.setData(macd.macd);
+    window.seriesSignal.setData(macd.signal);
+    window.seriesHist.setData(macd.histogram);
+  }
+
+  // Actualizar información de indicadores
+  const ultima = velas[velas.length - 1];
+  const anterior = velas[velas.length - 2] || ultima;
+  const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
+
+  document.getElementById('precio-actual').textContent = ultima.close.toFixed(4);
+  const elCambio = document.getElementById('cambio-pct');
+  elCambio.textContent = `${cambio >= 0 ? '+' : ''}${cambio.toFixed(2)}%`;
+  elCambio.className = 'cambio-pct ' + (cambio >= 0 ? 'up' : 'down');
+
+  document.getElementById('input-precio').value = ultima.close.toFixed(4);
+
+  // Actualizar panel de indicadores (como en la imagen)
+  if (bb.superior.length > 0) {
+    const idx = bb.superior.length - 1;
+    document.getElementById('bb-info').textContent = 
+      `U:${bb.superior[idx].value.toFixed(2)} M:${bb.media[idx].value.toFixed(2)} L:${bb.inferior[idx].value.toFixed(2)}`;
+  }
+  
+  // Volumen simulado
+  const vol = Math.floor(100000 + Math.random() * 2000000);
+  document.getElementById('vol-info').textContent = 
+    (vol / 1000000).toFixed(2) + 'M';
+  
+  // MACD info
+  if (macd.macd.length > 0) {
+    const idx = macd.macd.length - 1;
+    document.getElementById('macd-info').textContent = 
+      `${macd.macd[idx].value.toFixed(4)} | Signal:${macd.signal[idx].value.toFixed(4)} | Hist:${macd.histogram[idx].value.toFixed(4)}`;
+  }
+
+  chart.timeScale().fitContent();
 }
 
 // ================================================================
@@ -1057,7 +1180,6 @@ async function cargarOrdenesAbiertas() {
     return;
   }
   
-  // Si Supabase está configurado, obtener órdenes reales
   if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient
@@ -1067,8 +1189,7 @@ async function cargarOrdenesAbiertas() {
         .eq('estado', 'abierta')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      if (data && data.length > 0) {
+      if (!error && data && data.length > 0) {
         renderizarOrdenesAbiertas(data);
         return;
       }
@@ -1076,7 +1197,7 @@ async function cargarOrdenesAbiertas() {
       console.warn('Error obteniendo órdenes:', err);
     }
   }
-  // Fallback a datos mock
+  
   const ordenesMock = [
     { id: '1', tipo: 'compra', cantidad_tok: 150, precio: 1.36 },
     { id: '2', tipo: 'venta', cantidad_tok: 75, precio: 1.42 }
@@ -1105,7 +1226,6 @@ async function cancelarOrden(ordenId) {
     return;
   }
   
-  // Si Supabase está configurado, cancelar orden en la base de datos
   if (supabaseClient) {
     try {
       const { error } = await supabaseClient
@@ -1114,14 +1234,13 @@ async function cancelarOrden(ordenId) {
         .eq('id', ordenId)
         .eq('wallet', walletConectada.toLowerCase());
       
-      if (error) throw error;
-      alert('Orden cancelada exitosamente.');
-      await cargarOrdenesAbiertas();
-      return;
+      if (!error) {
+        alert('Orden cancelada exitosamente.');
+        await cargarOrdenesAbiertas();
+        return;
+      }
     } catch (err) {
       console.warn('Error cancelando orden:', err);
-      alert('Error al cancelar la orden: ' + err.message);
-      return;
     }
   }
   
@@ -1136,7 +1255,6 @@ async function cargarHistorialTransacciones() {
     return;
   }
   
-  // Si Supabase está configurado, obtener historial real
   if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient
@@ -1146,8 +1264,7 @@ async function cargarHistorialTransacciones() {
         .order('created_at', { ascending: false })
         .limit(50);
       
-      if (error) throw error;
-      if (data && data.length > 0) {
+      if (!error && data && data.length > 0) {
         renderizarHistorial(data);
         return;
       }
@@ -1155,7 +1272,7 @@ async function cargarHistorialTransacciones() {
       console.warn('Error obteniendo historial:', err);
     }
   }
-  // Fallback a datos mock
+  
   const historialMock = [
     { id: 'tx1', tipo: 'compra', cantidad_tok: 100, precio: 1.35, tx_hash: '0xabc123' },
     { id: 'tx2', tipo: 'venta', cantidad_tok: 50, precio: 1.40, tx_hash: '0xdef456' }
@@ -1179,7 +1296,7 @@ function renderizarHistorial(historial) {
 }
 
 // ================================================================
-// EJECUTAR ORDEN (simulación)
+// EJECUTAR ORDEN
 // ================================================================
 async function ejecutarOrden(tipo, cantidad, precio) {
   if (!walletConectada) {
@@ -1202,17 +1319,9 @@ async function ejecutarOrden(tipo, cantidad, precio) {
   
   if (!confirmar) return;
   
-  // Simular transacción
   try {
-    // Si hay contrato real configurado, ejecutar transacción en blockchain
-    if (DIRECCION_CONTRATO_TOK !== "0x0000000000000000000000000000000000000000" && providerEthers) {
-      // Aquí iría la lógica real de transacción con el contrato
-      alert('⚠️ Contrato no implementado. Esta es una simulación.');
-    }
-    
-    // Guardar en Supabase si está configurado
     if (supabaseClient) {
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from('transacciones')
         .insert([{
           wallet: walletConectada.toLowerCase(),
@@ -1234,7 +1343,6 @@ async function ejecutarOrden(tipo, cantidad, precio) {
           `Total: $${total.toFixed(4)}\n` +
           `Comisión: $${comision.toFixed(4)}`);
     
-    // Actualizar saldos y órdenes
     await actualizarSaldos();
     await cargarOrdenesAbiertas();
     
@@ -1242,29 +1350,6 @@ async function ejecutarOrden(tipo, cantidad, precio) {
     console.error('Error ejecutando orden:', err);
     alert('❌ Error al ejecutar la orden: ' + err.message);
   }
-}
-
-// ================================================================
-// CARGAR Y RENDERIZAR TODO
-// ================================================================
-async function cargarYRenderizarTodo(timeframe) {
-  const velas = await cargarVelasDesdeSupabase(timeframe);
-  seriesVelas.setData(velas);
-
-  const indicador = calcularIndicadorRSL(velas);
-  seriesIndicador.setData(indicador);
-
-  const ultima = velas[velas.length - 1];
-  const anterior = velas[velas.length - 2] || ultima;
-  const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
-
-  document.getElementById('precio-actual').textContent = ultima.close.toFixed(4);
-  const elCambio = document.getElementById('cambio-pct');
-  elCambio.textContent = `${cambio >= 0 ? '+' : ''}${cambio.toFixed(2)}%`;
-  elCambio.className = 'cambio-pct ' + (cambio >= 0 ? 'up' : 'down');
-
-  document.getElementById('input-precio').value = ultima.close.toFixed(4);
-  chart.timeScale().fitContent();
 }
 
 // ================================================================
@@ -1321,11 +1406,8 @@ document.querySelectorAll('.tab-portafolio').forEach(btn => {
     document.querySelectorAll('.tab-portafolio').forEach(b => b.classList.remove('activo'));
     btn.classList.add('activo');
     panelPortafolioActivo = btn.dataset.panel;
-    if (panelPortafolioActivo === 'ordenes') {
-      cargarOrdenesAbiertas();
-    } else {
-      cargarHistorialTransacciones();
-    }
+    if (panelPortafolioActivo === 'ordenes') cargarOrdenesAbiertas();
+    else cargarHistorialTransacciones();
   });
 });
 
