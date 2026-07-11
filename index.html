@@ -1,2 +1,662 @@
-const supabaseUrl = 'https://kbrlmeylciwocsxndtvv.supabase.co';  // Tu URL real
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImticmxtZXlsY2l3b2NzeG5kdHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MzUzNTMsImV4cCI6MjA5OTIxMTM1M30.OwWk3okFUtUAmidKfcJ4Ldf7qRXr201dkwLkWpIzMFU';          // Tu clave real
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading TOK — Sariel's Ecosystem</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+--masa:#0d0b0a; --trigo:#d4af7a; --horno:#e85d3d;
+--verde:#2ecc71; --verde-brillante:#00f5a0;
+--rojo:#e74c3c; --rojo-brillante:#ff6b6b;
+--panel:#1a1512; --texto:#f0e6d8; --fondo-grafico:#0f0c0a;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--masa); color:var(--texto); font-family:'Inter',sans-serif;}
+h1,h2{font-family:'Fraunces',serif;}
+.header{padding:12px 16px;border-bottom:1px solid #2a221c;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg, #1a1512 0%, #0d0b0a 100%);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.logo-sariels{display:flex;flex-direction:column;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;flex-shrink:0;background:radial-gradient(ellipse at 30% 30%, #f5d79a, #c9a05a 40%, #a8843a 70%, #7a6430),repeating-linear-gradient(45deg, transparent 0px, transparent 6px, rgba(255,215,130,0.15) 6px, rgba(255,215,130,0.15) 8px),repeating-linear-gradient(-30deg, transparent 0px, transparent 4px, rgba(180,150,80,0.10) 4px, rgba(180,150,80,0.10) 6px);background-blend-mode: overlay, normal, normal;box-shadow: 0 0 30px rgba(212,175,122,0.15), inset 0 0 20px rgba(255,215,130,0.08);border:1.5px solid rgba(212,175,122,0.3);position:relative;overflow:hidden;}
+.logo-sariels::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 60% 40%, rgba(255,230,170,0.25) 0%, transparent 50%),radial-gradient(ellipse at 80% 70%, rgba(200,170,100,0.15) 0%, transparent 40%),radial-gradient(ellipse at 20% 80%, rgba(255,215,130,0.10) 0%, transparent 35%);animation: vetasAgua 12s ease-in-out infinite alternate;}
+@keyframes vetasAgua{0%{ transform:translate(0%,0%) rotate(0deg); }100%{ transform:translate(5%,5%) rotate(5deg); }}
+.logo-sariels .s-letter{font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;color:#f5e6c8;text-shadow: 0 1px 4px rgba(100,70,20,0.4), 0 0 20px rgba(212,175,122,0.15);z-index:1;letter-spacing:1px;line-height:1;}
+.header-titulo{display:flex;flex-direction:column;line-height:1.2;}
+.header-titulo .marca{font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;color:#f5e6c8;letter-spacing:2px;text-shadow:0 0 20px rgba(212,175,122,0.08);}
+.header-titulo .eslogan{font-family:'Inter',sans-serif;font-weight:400;font-size:0.55rem;color:#a89078;letter-spacing:2.5px;text-transform:uppercase;}
+.header-precio{text-align:right;}
+.precio-actual{font-size:1.5rem;font-weight:600;color:#fff;letter-spacing:0.5px;}
+.cambio-pct{font-size:0.7rem;padding:2px 10px;border-radius:12px;margin-left:4px;font-weight:500;}
+.cambio-pct.up{background:rgba(46,204,113,0.2); color:var(--verde-brillante);}
+.cambio-pct.down{background:rgba(231,76,60,0.2); color:var(--rojo-brillante);}
+.estado-conexion{font-size:0.65rem;color:#6a5d50;padding:5px 16px;background:#11100e;border-bottom:1px solid #1f1a16;display:flex;align-items:center;gap:6px;}
+.estado-conexion .dot{width:5px;height:5px;border-radius:50%;background:#6a5d50;display:inline-block;}
+.estado-conexion.conectado .dot{background:var(--verde-brillante); box-shadow:0 0 8px rgba(0,245,160,0.3);}
+.estado-conexion.conectado{color:var(--verde-brillante);}
+#chart-container{width:100%; height:340px; background:var(--fondo-grafico); position:relative;}
+#indicador-container{width:100%; height:100px; border-top:1px solid #1f1a16; background:var(--fondo-grafico);}
+.indicadores-info{display:flex;flex-wrap:wrap;gap:8px 16px;padding:6px 16px;background:#0d0b0a;border-bottom:1px solid #1f1a16;font-size:0.6rem;color:#6a5d50;font-family:'Inter',monospace;letter-spacing:0.2px;}
+.indicadores-info .bb, .indicadores-info .vol, .indicadores-info .macd{display:flex;gap:6px;align-items:center;}
+.indicadores-info .valor{color:#b8a898;font-weight:500;}
+.indicadores-info .valor.verde{color:var(--verde-brillante);}
+.indicadores-info .valor.rojo{color:var(--rojo-brillante);}
+.indicadores-info .valor.trigo{color:var(--trigo);}
+.timeframes{display:flex;gap:4px;padding:8px 16px;background:var(--fondo-grafico);border-bottom:1px solid #1f1a16;}
+.timeframes button{background:transparent;border:none;color:#6a5d50;padding:4px 12px;border-radius:4px;font-size:0.65rem;font-weight:500;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
+.timeframes button:hover{color:var(--texto);}
+.timeframes button.activo{color:#fff;background:rgba(212,175,122,0.15);}
+.slogan-wrapper{padding:6px 16px;background:#11100e;border-bottom:1px solid #1f1a16;display:flex;align-items:flex-start;gap:10px;}
+.slogan-icono{flex-shrink:0;width:20px;height:20px;margin-top:1px;}
+.slogan-texto{font-size:0.65rem;line-height:1.5;color:#8a7a6a;font-style:italic;}
+.slogan-texto strong{color:var(--trigo); font-style:normal;}
+.aceptacion-check-wrapper{padding:6px 16px;display:flex;align-items:center;gap:10px;background:#11100e;border-bottom:1px solid #1f1a16;}
+.aceptacion-check-wrapper input[type="checkbox"]{width:15px;height:15px;accent-color:#d4af7a;cursor:pointer;flex-shrink:0;appearance:none;-webkit-appearance:none;background:#1a1512;border:2px solid #3a2f26;border-radius:3px;transition:all 0.2s;position:relative;}
+.aceptacion-check-wrapper input[type="checkbox"]:checked{background:#d4af7a;border-color:#d4af7a;}
+.aceptacion-check-wrapper input[type="checkbox"]:checked::after{content:"✓";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--masa);font-size:10px;font-weight:700;}
+.aceptacion-check-wrapper label{font-size:0.65rem;color:#8a7a6a;cursor:pointer;}
+.aceptacion-check-wrapper label strong{color:var(--trigo);text-decoration:underline;cursor:pointer;}
+.conexion-check-wrapper{padding:6px 16px;display:none;align-items:center;gap:10px;background:#11100e;border-bottom:1px solid #1f1a16;}
+.conexion-check-wrapper.visible{display:flex;}
+.conexion-check-wrapper input[type="checkbox"]{width:15px;height:15px;accent-color:#f6851b;cursor:pointer;flex-shrink:0;appearance:none;-webkit-appearance:none;background:#1a1512;border:2px solid #3a2f26;border-radius:3px;transition:all 0.2s;position:relative;}
+.conexion-check-wrapper input[type="checkbox"]:checked{background:#f6851b;border-color:#f6851b;}
+.conexion-check-wrapper input[type="checkbox"]:checked::after{content:"✓";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:10px;font-weight:700;}
+.conexion-check-wrapper label{font-size:0.7rem;color:#8a7a6a;cursor:pointer;}
+.conexion-check-wrapper label strong{color:var(--trigo);}
+.panel-wallet{padding:10px 14px;background:var(--panel);margin:10px 10px 0;border-radius:10px;border:1px solid #1f1a16;}
+.btn-wallet{width:100%;padding:9px;background:linear-gradient(135deg, #f6851b, #e07a15);border:none;border-radius:8px;color:#fff;font-weight:600;font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+.btn-wallet:hover{transform:scale(1.01); box-shadow:0 4px 20px rgba(246,133,27,0.2);}
+.wallet-direccion{font-size:0.7rem;color:var(--trigo);word-break:break-all;margin-top:4px;}
+.saldos-grid{display:flex;gap:6px;margin-top:6px;}
+.saldo-item{flex:1;background:#0d0b0a;border-radius:6px;padding:5px 6px;text-align:center;}
+.saldo-item .label{font-size:0.55rem; color:#6a5d50; text-transform:uppercase; letter-spacing:0.5px;}
+.saldo-item .valor{font-size:0.8rem; font-weight:600; color:var(--texto);}
+.panel-operar{padding:12px 14px;background:var(--panel);margin:10px;border-radius:10px;border:1px solid #1f1a16;}
+.tabs-operar{display:flex;gap:0;margin-bottom:10px;border-radius:8px;overflow:hidden;background:#0d0b0a;}
+.tab-btn{flex:1;padding:7px;text-align:center;background:transparent;border:none;color:#6a5d50;font-size:0.75rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.tab-btn.comprar.activo{background:var(--verde); color:#fff;}
+.tab-btn.vender.activo{background:var(--rojo); color:#fff;}
+.tab-btn:hover:not(.activo){color:var(--texto);}
+.campo{margin-bottom:8px;}
+.campo label{display:block; font-size:0.65rem; color:#6a5d50; margin-bottom:2px; letter-spacing:0.3px;}
+.campo input{width:100%;padding:7px 10px;background:#0d0b0a;border:1px solid #1f1a16;border-radius:6px;color:var(--texto);font-size:0.85rem;outline:none;transition:border 0.2s;}
+.campo input:focus{border-color:var(--trigo);}
+.campo input:disabled{opacity:0.6;}
+.gas-estimado{font-size:0.65rem;color:#6a5d50;margin:-2px 0 8px;padding:5px 8px;background:#0d0b0a;border-radius:6px;display:flex;justify-content:space-between;}
+.gas-estimado span:last-child{color:var(--trigo); font-weight:500;}
+.btn-ejecutar{width:100%;padding:10px;border:none;border-radius:8px;font-weight:600;font-size:0.85rem;color:#fff;cursor:pointer;transition:all 0.2s;}
+.btn-ejecutar.comprar{background:linear-gradient(135deg, var(--verde), #1a9c5a);}
+.btn-ejecutar.vender{background:linear-gradient(135deg, var(--rojo), #c0392b);}
+.btn-ejecutar:hover{transform:scale(1.01);}
+.btn-ejecutar:disabled{opacity:0.5; cursor:not-allowed; transform:none;}
+.panel-portafolio{margin:10px;background:var(--panel);border-radius:10px;border:1px solid #1f1a16;overflow:hidden;}
+.tabs-portafolio{display:flex; background:#0d0b0a;}
+.tab-portafolio{flex:1;padding:8px 6px;text-align:center;background:transparent;border:none;color:#6a5d50;font-size:0.65rem;font-weight:500;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
+.tab-portafolio.activo{color:var(--trigo); border-bottom:2px solid var(--trigo);}
+.contenido-portafolio{padding:10px 12px; min-height:50px;}
+.orden-item, .tx-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1f1a16;font-size:0.75rem;}
+.orden-item:last-child, .tx-item:last-child{border-bottom:none;}
+.orden-tipo.compra, .tx-tipo.compra{color:var(--verde-brillante);}
+.orden-tipo.venta, .tx-tipo.venta{color:var(--rojo-brillante);}
+.btn-cancelar{background:none;border:1px solid var(--rojo);color:var(--rojo);padding:2px 8px;border-radius:4px;font-size:0.6rem;cursor:pointer;transition:all 0.2s;}
+.btn-cancelar:hover{background:var(--rojo); color:#fff;}
+.tx-link{color:var(--trigo); font-size:0.65rem; text-decoration:underline; cursor:pointer;}
+.vacio-portafolio{color:#6a5d50; font-size:0.75rem; text-align:center; padding:6px 0;}
+.footer-legal{text-align:center;padding:12px 16px;margin-top:4px;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid #1f1a16;}
+.link-legal{color:#6a5d50;font-size:0.65rem;text-decoration:underline;background:none;border:none;cursor:pointer;transition:color 0.2s;}
+.link-legal:hover{color:var(--trigo);}
+.modal-overlay{display:none;position:fixed;top:0; left:0;width:100%; height:100%;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.activo{display:flex;}
+.modal-caja{background:var(--panel);border-radius:14px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;padding:20px 16px;border:1px solid #2a221c;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative;}
+.modal-caja.amplio{max-width:600px;}
+.modal-cerrar{position:absolute;top:10px;right:10px;background:#0d0b0a;border:1px solid #1f1a16;color:var(--texto);width:26px;height:26px;border-radius:50%;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal-titulo{font-family:'Fraunces',serif;color:var(--trigo);font-size:1rem;margin-bottom:12px;padding-right:30px;}
+.modal-titulo.grande{font-size:1.1rem;}
+.modal-punto{margin-bottom:10px;font-size:0.8rem;line-height:1.5;color:#b8a898;}
+.modal-punto strong{color:var(--trigo);}
+.modal-texto-legal{max-height:60vh;overflow-y:auto;padding-right:8px;font-size:0.75rem;color:#b8a898;line-height:1.6;}
+.modal-texto-legal .capitulo{color:var(--trigo);font-weight:600;margin:12px 0 6px;}
+.modal-texto-legal .articulo{color:#d4af7a;margin:6px 0 2px;font-weight:500;}
+.btn-aceptar-legal{width:100%;margin-top:12px;padding:10px;background:linear-gradient(135deg, var(--trigo), #b8945a);border:none;border-radius:8px;color:var(--masa);font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.btn-aceptar-legal:hover{transform:scale(1.01); box-shadow:0 4px 20px rgba(212,175,122,0.2);}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="header-left">
+<div class="logo-sariels"><span class="s-letter">S</span></div>
+<div class="header-titulo"><span class="marca">Sariel's</span><span class="eslogan">Sabor al paladar</span></div>
+</div>
+<div class="header-precio">
+<span class="precio-actual" id="precio-actual">--</span>
+<span class="cambio-pct" id="cambio-pct">--</span>
+</div>
+</div>
+
+<div class="estado-conexion" id="estado-conexion"><span class="dot"></span> Conectando a datos...</div>
+
+<div class="slogan-wrapper">
+<svg class="slogan-icono" viewBox="0 0 36 36" fill="none">
+<circle cx="18" cy="18" r="16" stroke="#d4af7a" stroke-width="2"/>
+<path d="M10 18 L14 22 L26 12" stroke="#d4af7a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<p class="slogan-texto"><strong>Un estratega conoce el valor de sus activos.</strong> En Sariel's, no te obligamos al consumo: te damos el control. Canjea tus TOKs por galletas de alta calidad o transfiérelos a quien necesite completar su compra. El valor es tuyo, tú decides cómo ejecutarlo.</p>
+</div>
+
+<div class="aceptacion-check-wrapper">
+<input type="checkbox" id="check-aceptar">
+<label for="check-aceptar">He leído y acepto los <strong id="abrir-legal-desde-check">Términos y Condiciones</strong> de Sariel's Ecosystem</label>
+</div>
+
+<div class="conexion-check-wrapper" id="conexion-check-wrapper">
+<input type="checkbox" id="check-conectar">
+<label for="check-conectar"><strong>Conectar MetaMask</strong></label>
+</div>
+
+<div class="timeframes">
+<button data-tf="1m">1m</button>
+<button data-tf="5m">5m</button>
+<button data-tf="15m">15m</button>
+<button data-tf="1h">1h</button>
+<button data-tf="1d" class="activo">1d</button>
+</div>
+
+<div class="indicadores-info" id="indicadores-info">
+<span class="bb">📊 BB(20,2) <span class="valor trigo" id="bb-info">U:-- M:-- L:--</span></span>
+<span class="vol">📈 Vol: <span class="valor" id="vol-info">--</span></span>
+<span class="macd">📉 MACD(12,26) <span class="valor" id="macd-info">--</span></span>
+</div>
+
+<div id="chart-container"></div>
+<div id="indicador-container"></div>
+
+<div class="panel-wallet" id="panel-wallet">
+<button id="btn-conectar-wallet" class="btn-wallet">🦊 Conectar MetaMask</button>
+<div id="wallet-info" style="display:none;">
+<p class="wallet-direccion" id="wallet-direccion"></p>
+<div class="saldos-grid">
+<div class="saldo-item"><div class="label">TOK</div><div class="valor" id="saldo-tok">--</div></div>
+<div class="saldo-item"><div class="label">USDT</div><div class="valor" id="saldo-usdt">--</div></div>
+<div class="saldo-item"><div class="label">MATIC</div><div class="valor" id="saldo-matic">--</div></div>
+</div>
+</div>
+</div>
+
+<div class="panel-operar">
+<div class="tabs-operar">
+<button class="tab-btn comprar activo" id="tab-comprar">Comprar</button>
+<button class="tab-btn vender" id="tab-vender">Vender</button>
+</div>
+<div class="campo"><label>Cantidad de TOK</label><input type="number" id="input-cantidad" placeholder="0.00" min="0" step="0.01"></div>
+<div class="campo"><label>Precio unitario (referencia)</label><input type="number" id="input-precio" placeholder="0.00" min="0" step="0.0001"></div>
+<div class="campo"><label>Total estimado</label><input type="text" id="input-total" placeholder="0.00" disabled></div>
+<div class="gas-estimado"><span>⛽ Costo de gas estimado:</span><span id="gas-estimado-valor">-- MATIC</span></div>
+<button class="btn-ejecutar comprar" id="btn-ejecutar">Ejecutar compra</button>
+</div>
+
+<div class="panel-portafolio">
+<div class="tabs-portafolio">
+<button class="tab-portafolio activo" data-panel="ordenes">Órdenes Abiertas</button>
+<button class="tab-portafolio" data-panel="historial">Historial</button>
+</div>
+<div class="contenido-portafolio" id="contenido-portafolio">
+<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>
+</div>
+</div>
+
+<div class="footer-legal">
+<button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
+<span style="color:#3a2f26;">·</span>
+<button class="link-legal" id="btn-abrir-legal-completo">📜 Términos completos (81 artículos)</button>
+</div>
+
+<div class="modal-overlay" id="modal-legal-completo">
+<div class="modal-caja amplio">
+<button class="modal-cerrar" id="modal-legal-cerrar">✕</button>
+<h2 class="modal-titulo grande">📜 Términos y Condiciones del Ecosistema Sariel's</h2>
+<div class="modal-texto-legal">
+<p class="capitulo">PREÁMBULO</p>
+<p>El presente documento constituye el marco legal y operativo del Ecosistema Sariel's, estableciendo las bases bajo las cuales el Token TOK opera como un activo de intercambio digital dentro de un ecosistema de fidelización y redención de productos físicos.</p>
+<p class="capitulo">CAPÍTULO I: DISPOSICIONES GENERALES</p>
+<p class="articulo">Artículo 1. Objeto del Ecosistema</p>
+<p>El Ecosistema Sariel's tiene como objeto principal la creación de un sistema de fidelización y recompensa que permita a los titulares de NFTs Sariel's acceder a beneficios y descuentos en la adquisición de productos físicos de la marca, a través de la utilización del Token TOK como medio de intercambio dentro de la plataforma.</p>
+<p class="articulo">Artículo 8. Formación del Precio</p>
+<p><strong>8.1.</strong> El precio del Token TOK se forma exclusivamente a través de las operaciones de compra y venta realizadas entre los usuarios en la plataforma.</p>
+<p><strong>8.3.</strong> La marca Sariel's NO interviene en la formación del precio del Token TOK.</p>
+<p class="articulo">Artículo 10. Quema de Tokens</p>
+<p><strong>10.4.</strong> La quema de Tokens TOK NO afecta directamente el precio del Token TOK; el efecto es indirecto a través de la reducción de oferta.</p>
+<div style="border-top:1px solid #2a221c; margin:16px 0 8px; padding-top:12px; text-align:center; color:#6a5d50; font-size:0.65rem;">
+<p>📅 Última actualización: 10 de julio de 2026</p>
+<p>© 2026 Sariel's Ecosystem — Todos los derechos reservados</p>
+</div>
+</div>
+<button class="btn-aceptar-legal" id="btn-aceptar-legal-completo">✅ Acepto los Términos y Condiciones</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-legal-overlay">
+<div class="modal-caja">
+<button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
+<h2 class="modal-titulo">Términos de Redención del Ecosistema Sariel's</h2>
+<p class="modal-punto"><strong>Naturaleza del Token (TOK):</strong> El TOK es un activo de intercambio dentro del ecosistema. Su valor de mercado es determinado exclusivamente por la oferta y la demanda entre usuarios.</p>
+<p class="modal-punto"><strong>Tarifa de Transacción:</strong> Toda transacción está sujeta a una comisión del 1% a favor de la marca.</p>
+<p class="modal-punto"><strong>Valor de Redención:</strong> Cada TOK tiene un valor de redención de $6.25 MXN (12 TOK = 1 NFT = 1 domo gratis).</p>
+</div>
+</div>
+
+<script>
+const supabaseUrl = 'https://kbrlmeylciwocsxndtvv.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImticmxtZXlsY2l3b2NzeG5kdHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MzUzNTMsImV4cCI6MjA5OTIxMTM1M30.OwWk3okFUtUAmidKfcJ4Ldf7qRXr201dkwLkWpIzMFU';
+
+let modoActual = 'compra';
+let timeframeActual = '1d';
+let chart, seriesVelas, chartIndicador, seriesIndicador;
+let seriesBandaSuperior, seriesBandaInferior, seriesMedia;
+let walletConectada = null;
+let providerEthers = null;
+let panelPortafolioActivo = 'ordenes';
+let supabaseClient = null;
+let datosVelas = [];
+
+const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
+const COMISION_PORCENTAJE = 0.01;
+const TOK_POR_NFT = 12;
+const PRECIO_DOMO_MXN = 75.00;
+const VALOR_REDENCION_TOK = PRECIO_DOMO_MXN / TOK_POR_NFT;
+
+const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
+const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
+const ABI_ERC20_MINIMO = ["function balanceOf(address owner) view returns (uint256)","function decimals() view returns (uint8)"];
+
+function initSupabase() {
+  const { createClient } = supabase;
+  supabaseClient = createClient(supabaseUrl, supabaseKey);
+  console.log('✅ Supabase inicializado');
+}
+
+document.getElementById('check-aceptar').addEventListener('change', function() {
+  document.getElementById('conexion-check-wrapper').classList.toggle('visible', this.checked);
+  if (!this.checked) document.getElementById('check-conectar').checked = false;
+});
+
+document.getElementById('abrir-legal-desde-check').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('modal-legal-completo').classList.add('activo');
+});
+
+document.getElementById('check-conectar').addEventListener('change', function() {
+  if (this.checked) conectarMetaMask();
+  else {
+    walletConectada = null; providerEthers = null;
+    document.getElementById('btn-conectar-wallet').style.display = 'block';
+    document.getElementById('wallet-info').style.display = 'none';
+    document.getElementById('estado-conexion').className = 'estado-conexion';
+    document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Desconectado';
+    document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
+  }
+});
+
+document.getElementById('btn-abrir-legal').addEventListener('click', () => document.getElementById('modal-legal-overlay').classList.add('activo'));
+document.getElementById('modal-cerrar-btn').addEventListener('click', () => document.getElementById('modal-legal-overlay').classList.remove('activo'));
+document.getElementById('modal-legal-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) document.getElementById('modal-legal-overlay').classList.remove('activo'); });
+document.getElementById('btn-abrir-legal-completo').addEventListener('click', () => document.getElementById('modal-legal-completo').classList.add('activo'));
+document.getElementById('modal-legal-cerrar').addEventListener('click', () => document.getElementById('modal-legal-completo').classList.remove('activo'));
+document.getElementById('modal-legal-completo').addEventListener('click', (e) => { if (e.target === e.currentTarget) document.getElementById('modal-legal-completo').classList.remove('activo'); });
+document.getElementById('btn-aceptar-legal-completo').addEventListener('click', function() {
+  document.getElementById('check-aceptar').checked = true;
+  document.getElementById('check-aceptar').dispatchEvent(new Event('change'));
+  document.getElementById('modal-legal-completo').classList.remove('activo');
+});
+
+async function conectarMetaMask() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('No se detectó MetaMask. Instálalo desde metamask.io');
+    document.getElementById('check-conectar').checked = false;
+    return;
+  }
+  try {
+    const cuentas = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    walletConectada = cuentas[0];
+    try {
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x13882' }] });
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{ chainId: '0x13882', chainName: 'Polygon Amoy', nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }, rpcUrls: ['https://rpc-amoy.polygon.technology/'], blockExplorerUrls: ['https://amoy.polygonscan.com/'] }]
+        });
+      } else throw switchError;
+    }
+    providerEthers = new ethers.providers.Web3Provider(window.ethereum);
+    document.getElementById('btn-conectar-wallet').style.display = 'none';
+    document.getElementById('wallet-info').style.display = 'block';
+    document.getElementById('wallet-direccion').textContent = walletConectada.slice(0, 6) + '...' + walletConectada.slice(-4);
+    await actualizarSaldos();
+    await cargarOrdenesAbiertas();
+    document.getElementById('check-conectar').checked = true;
+    document.getElementById('estado-conexion').className = 'estado-conexion conectado';
+    document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
+    window.ethereum.on('accountsChanged', (cuentas) => {
+      if (cuentas.length > 0) {
+        walletConectada = cuentas[0];
+        document.getElementById('wallet-direccion').textContent = walletConectada.slice(0, 6) + '...' + walletConectada.slice(-4);
+        actualizarSaldos();
+      } else {
+        document.getElementById('check-conectar').checked = false;
+        walletConectada = null;
+        document.getElementById('btn-conectar-wallet').style.display = 'block';
+        document.getElementById('wallet-info').style.display = 'none';
+      }
+    });
+    window.ethereum.on('chainChanged', () => window.location.reload());
+  } catch (err) {
+    console.error(err);
+    alert('No se pudo conectar la wallet.');
+    document.getElementById('check-conectar').checked = false;
+  }
+}
+
+async function actualizarSaldos() {
+  if (!providerEthers) return;
+  try {
+    const balanceNativo = await providerEthers.getBalance(walletConectada);
+    document.getElementById('saldo-matic').textContent = parseFloat(ethers.utils.formatEther(balanceNativo)).toFixed(4);
+  } catch (err) { document.getElementById('saldo-matic').textContent = 'Error'; }
+  document.getElementById('saldo-tok').textContent = '0.00';
+  document.getElementById('saldo-usdt').textContent = '0.00';
+}
+
+async function estimarGas() {
+  if (!providerEthers) { document.getElementById('gas-estimado-valor').textContent = 'Conecta tu wallet'; return; }
+  try {
+    const gasPrice = await providerEthers.getGasPrice();
+    const gasLimite = ethers.BigNumber.from("65000");
+    const costo = gasPrice.mul(gasLimite);
+    document.getElementById('gas-estimado-valor').textContent = parseFloat(ethers.utils.formatEther(costo)).toFixed(6) + ' MATIC';
+  } catch (err) { document.getElementById('gas-estimado-valor').textContent = 'Error'; }
+}
+
+function inicializarGrafico() {
+  chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
+    layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
+    grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
+    timeScale: { borderColor: '#1f1a16' },
+    rightPriceScale: { borderColor: '#1f1a16' },
+  });
+  seriesVelas = chart.addCandlestickSeries({ upColor: '#2ecc71', downColor: '#e74c3c', borderUpColor: '#2ecc71', borderDownColor: '#e74c3c', wickUpColor: '#2ecc71', wickDownColor: '#e74c3c', borderVisible: true });
+  seriesBandaSuperior = chart.addLineSeries({ color: 'rgba(46, 204, 113, 0.3)', lineWidth: 1, lineStyle: 2, priceLineVisible: false });
+  seriesBandaInferior = chart.addLineSeries({ color: 'rgba(231, 76, 60, 0.3)', lineWidth: 1, lineStyle: 2, priceLineVisible: false });
+  seriesMedia = chart.addLineSeries({ color: 'rgba(212, 175, 122, 0.4)', lineWidth: 1, lineStyle: 1, priceLineVisible: false });
+  chartIndicador = LightweightCharts.createChart(document.getElementById('indicador-container'), {
+    layout: { background: { color: '#0f0c0a' }, textColor: '#8a7a6a' },
+    grid: { vertLines: { color: '#1a1512' }, horzLines: { color: '#1a1512' } },
+    timeScale: { visible: false }, rightPriceScale: { visible: false },
+  });
+  seriesIndicador = chartIndicador.addLineSeries({ color: '#d4af7a', lineWidth: 2, crosshairMarkerVisible: false });
+  const seriesSignal = chartIndicador.addLineSeries({ color: '#ff6b6b', lineWidth: 1, lineStyle: 2, crosshairMarkerVisible: false });
+  const seriesHist = chartIndicador.addHistogramSeries({ color: '#2ecc71', priceFormat: { type: 'volume' } });
+  window.seriesSignal = seriesSignal;
+  window.seriesHist = seriesHist;
+  chart.timeScale().subscribeVisibleLogicalRangeChange(range => chartIndicador.timeScale().setVisibleLogicalRange(range));
+}
+
+function calcularBB(velas, periodo = 20, desviaciones = 2) {
+  if (velas.length < periodo) return { superior: [], media: [], inferior: [] };
+  const resultado = { superior: [], media: [], inferior: [] };
+  for (let i = periodo - 1; i < velas.length; i++) {
+    const segmento = velas.slice(i - periodo + 1, i + 1);
+    const precios = segmento.map(v => v.close);
+    const media = precios.reduce((a, b) => a + b, 0) / precios.length;
+    const varianza = precios.reduce((a, b) => a + Math.pow(b - media, 2), 0) / precios.length;
+    const desv = Math.sqrt(varianza);
+    resultado.superior.push({ time: velas[i].time, value: media + desviaciones * desv });
+    resultado.media.push({ time: velas[i].time, value: media });
+    resultado.inferior.push({ time: velas[i].time, value: media - desviaciones * desv });
+  }
+  return resultado;
+}
+
+function calcularMACD(velas, fast = 12, slow = 26, signal = 9) {
+  if (velas.length < slow + signal) return { macd: [], signal: [], histogram: [] };
+  const precios = velas.map(v => v.close);
+  const emaFast = calcularEMA(precios, fast);
+  const emaSlow = calcularEMA(precios, slow);
+  const macdLine = [];
+  for (let i = 0; i < emaFast.length && i < emaSlow.length; i++) macdLine.push(emaFast[i] - emaSlow[i]);
+  const signalLine = calcularEMA(macdLine, signal);
+  const histogram = [];
+  for (let i = 0; i < macdLine.length && i < signalLine.length; i++) histogram.push(macdLine[i] - signalLine[i]);
+  return {
+    macd: macdLine.slice(signal - 1).map((v, i) => ({ time: velas[i + signal - 1].time, value: v })),
+    signal: signalLine.slice(signal - 1).map((v, i) => ({ time: velas[i + signal - 1].time, value: v })),
+    histogram: histogram.slice(signal - 1).map((v, i) => ({ time: velas[i + signal - 1].time, value: v })),
+  };
+}
+
+function calcularEMA(datos, periodo) {
+  const k = 2 / (periodo + 1);
+  const ema = [datos[0]];
+  for (let i = 1; i < datos.length; i++) ema.push(datos[i] * k + ema[i - 1] * (1 - k));
+  return ema;
+}
+
+function generarVelasMock(n) {
+  const velas = [];
+  let precio = 6.25;
+  const ahora = Math.floor(Date.now() / 1000);
+  const intervalo = 86400;
+  for (let i = n; i > 0; i--) {
+    const open = precio;
+    const cambio = (Math.random() - 0.48) * 0.25;
+    const close = open + cambio;
+    const high = Math.max(open, close) + Math.random() * 0.08;
+    const low = Math.min(open, close) - Math.random() * 0.08;
+    velas.push({ time: ahora - i * intervalo, open, high, low, close });
+    precio = close;
+  }
+  return velas;
+}
+
+async function cargarVelasDesdeSupabase(timeframe) {
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('tok_velas')
+        .select('*')
+        .eq('timeframe', timeframe)
+        .order('timestamp_apertura', { ascending: true })
+        .limit(100);
+      if (!error && data && data.length >= 5) {
+        document.getElementById('estado-conexion').className = 'estado-conexion conectado';
+        document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Datos reales del mercado';
+        return data.map(v => ({
+          time: Math.floor(new Date(v.timestamp_apertura).getTime() / 1000),
+          open: parseFloat(v.open), high: parseFloat(v.high), low: parseFloat(v.low), close: parseFloat(v.close)
+        }));
+      }
+    } catch (err) { console.warn('Error Supabase, usando demo:', err); }
+  }
+  document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Mercado en fase inicial — aún sin suficiente volumen para generar velas reales';
+  return generarVelasMock(80);
+}
+
+async function cargarYRenderizarTodo(timeframe) {
+  const velas = await cargarVelasDesdeSupabase(timeframe);
+  datosVelas = velas;
+  seriesVelas.setData(velas);
+  const bb = calcularBB(velas);
+  if (bb.superior.length > 0) { seriesBandaSuperior.setData(bb.superior); seriesMedia.setData(bb.media); seriesBandaInferior.setData(bb.inferior); }
+  const macd = calcularMACD(velas);
+  if (macd.macd.length > 0) { seriesIndicador.setData(macd.macd); window.seriesSignal.setData(macd.signal); window.seriesHist.setData(macd.histogram); }
+  const ultima = velas[velas.length - 1];
+  const anterior = velas[velas.length - 2] || ultima;
+  const cambio = ((ultima.close - anterior.close) / anterior.close) * 100;
+  document.getElementById('precio-actual').textContent = ultima.close.toFixed(4);
+  const elCambio = document.getElementById('cambio-pct');
+  elCambio.textContent = `${cambio >= 0 ? '+' : ''}${cambio.toFixed(2)}%`;
+  elCambio.className = 'cambio-pct ' + (cambio >= 0 ? 'up' : 'down');
+  document.getElementById('input-precio').value = ultima.close.toFixed(4);
+  if (bb.superior.length > 0) {
+    const idx = bb.superior.length - 1;
+    document.getElementById('bb-info').textContent = `U:${bb.superior[idx].value.toFixed(2)} M:${bb.media[idx].value.toFixed(2)} L:${bb.inferior[idx].value.toFixed(2)}`;
+  }
+  const vol = Math.floor(100000 + Math.random() * 2000000);
+  document.getElementById('vol-info').textContent = (vol / 1000000).toFixed(2) + 'M';
+  if (macd.macd.length > 0) {
+    const idx = macd.macd.length - 1;
+    document.getElementById('macd-info').textContent = `${macd.macd[idx].value.toFixed(4)} | Signal:${macd.signal[idx].value.toFixed(4)} | Hist:${macd.histogram[idx].value.toFixed(4)}`;
+  }
+  chart.timeScale().fitContent();
+}
+
+async function cargarOrdenesAbiertas() {
+  if (!walletConectada) { document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>'; return; }
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('tok_ordenes')
+        .select('*')
+        .eq('wallet', walletConectada.toLowerCase())
+        .eq('estado', 'pendiente')
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) { renderizarOrdenesAbiertas(data); return; }
+    } catch (err) { console.warn('Error obteniendo órdenes:', err); }
+  }
+  renderizarOrdenesAbiertas([]);
+}
+
+function renderizarOrdenesAbiertas(ordenes) {
+  const contenedor = document.getElementById('contenido-portafolio');
+  if (panelPortafolioActivo !== 'ordenes') return;
+  if (!ordenes || ordenes.length === 0) { contenedor.innerHTML = '<p class="vacio-portafolio">No tienes órdenes abiertas.</p>'; return; }
+  contenedor.innerHTML = ordenes.map(o => `
+    <div class="orden-item">
+      <span class="orden-tipo ${o.tipo}">${o.tipo === 'compra' ? '↑ Compra' : '↓ Venta'} ${o.cantidad_tok} TOK @ $${o.precio_unitario || '--'}</span>
+      <button class="btn-cancelar" onclick="cancelarOrden('${o.id}')">Cancelar</button>
+    </div>`).join('');
+}
+
+async function cancelarOrden(ordenId) {
+  if (!walletConectada) { alert('Conecta tu wallet primero.'); return; }
+  if (supabaseClient) {
+    try {
+      const { error } = await supabaseClient.from('tok_ordenes').update({ estado: 'cancelada' }).eq('id', ordenId).eq('wallet', walletConectada.toLowerCase());
+      if (!error) { alert('Orden cancelada exitosamente.'); await cargarOrdenesAbiertas(); return; }
+    } catch (err) { console.warn('Error cancelando orden:', err); }
+  }
+  await cargarOrdenesAbiertas();
+}
+
+async function cargarHistorialTransacciones() {
+  if (!walletConectada) { document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tu historial.</p>'; return; }
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient.from('tok_transacciones').select('*').eq('wallet', walletConectada.toLowerCase()).order('created_at', { ascending: false }).limit(50);
+      if (!error && data && data.length > 0) { renderizarHistorial(data); return; }
+    } catch (err) { console.warn('Error obteniendo historial:', err); }
+  }
+  renderizarHistorial([]);
+}
+
+function renderizarHistorial(historial) {
+  const contenedor = document.getElementById('contenido-portafolio');
+  if (panelPortafolioActivo !== 'historial') return;
+  if (!historial || historial.length === 0) { contenedor.innerHTML = '<p class="vacio-portafolio">Sin transacciones registradas.</p>'; return; }
+  contenedor.innerHTML = historial.map(tx => `
+    <div class="tx-item">
+      <span class="tx-tipo ${tx.tipo}">${tx.tipo === 'compra' ? '↑' : '↓'} ${tx.cantidad_tok} TOK @ $${tx.precio || '--'}</span>
+      ${tx.tx_hash ? `<a class="tx-link" href="${EXPLORADOR_BASE}${tx.tx_hash}" target="_blank">Ver en explorador</a>` : ''}
+    </div>`).join('');
+}
+
+async function ejecutarOrden(tipo, cantidad, precio) {
+  if (!walletConectada) { alert('Conecta tu wallet para ejecutar esta operación.'); return; }
+  const total = cantidad * precio;
+  const comision = total * COMISION_PORCENTAJE;
+  const totalConComision = total + comision;
+  const confirmar = confirm(`Confirmar ${tipo}:\nCantidad: ${cantidad} TOK\nPrecio: $${precio.toFixed(4)}\nTotal: $${total.toFixed(4)}\nComisión (1%): $${comision.toFixed(4)}\nTotal a pagar: $${totalConComision.toFixed(4)}`);
+  if (!confirmar) return;
+  try {
+    if (supabaseClient) {
+      const { error } = await supabaseClient.from('tok_transacciones').insert([{
+        wallet: walletConectada.toLowerCase(), tipo, cantidad_tok: cantidad, precio, total, comision,
+        tx_hash: '0x' + Math.random().toString(16).substring(2, 10), created_at: new Date().toISOString()
+      }]);
+      if (error) throw error;
+    }
+    alert(`✅ ${tipo} ejecutada con éxito!\n${cantidad} TOK @ $${precio.toFixed(4)}\nTotal: $${total.toFixed(4)}\nComisión: $${comision.toFixed(4)}`);
+    await actualizarSaldos();
+    await cargarOrdenesAbiertas();
+  } catch (err) {
+    console.error('Error ejecutando orden:', err);
+    alert('❌ Error al ejecutar la orden: ' + err.message);
+  }
+}
+
+document.getElementById('tab-comprar').addEventListener('click', () => {
+  modoActual = 'compra';
+  document.getElementById('tab-comprar').classList.add('activo');
+  document.getElementById('tab-vender').classList.remove('activo');
+  const btn = document.getElementById('btn-ejecutar');
+  btn.textContent = 'Ejecutar compra'; btn.className = 'btn-ejecutar comprar';
+});
+
+document.getElementById('tab-vender').addEventListener('click', () => {
+  modoActual = 'venta';
+  document.getElementById('tab-vender').classList.add('activo');
+  document.getElementById('tab-comprar').classList.remove('activo');
+  const btn = document.getElementById('btn-ejecutar');
+  btn.textContent = 'Ejecutar venta'; btn.className = 'btn-ejecutar vender';
+});
+
+function actualizarTotal() {
+  const cantidad = parseFloat(document.getElementById('input-cantidad').value) || 0;
+  const precio = parseFloat(document.getElementById('input-precio').value) || 0;
+  const total = cantidad * precio;
+  const comision = total * COMISION_PORCENTAJE;
+  document.getElementById('input-total').value = (total + comision).toFixed(4);
+  estimarGas();
+}
+document.getElementById('input-cantidad').addEventListener('input', actualizarTotal);
+document.getElementById('input-precio').addEventListener('input', actualizarTotal);
+
+document.getElementById('btn-ejecutar').addEventListener('click', () => {
+  const cantidad = parseFloat(document.getElementById('input-cantidad').value);
+  const precio = parseFloat(document.getElementById('input-precio').value);
+  if (!cantidad || cantidad <= 0) { alert('Ingresa una cantidad válida'); return; }
+  if (!precio || precio <= 0) { alert('Precio inválido'); return; }
+  ejecutarOrden(modoActual, cantidad, precio);
+});
+
+document.querySelectorAll('.timeframes button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timeframes button').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    timeframeActual = btn.dataset.tf;
+    cargarYRenderizarTodo(timeframeActual);
+  });
+});
+
+document.querySelectorAll('.tab-portafolio').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-portafolio').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    panelPortafolioActivo = btn.dataset.panel;
+    if (panelPortafolioActivo === 'ordenes') cargarOrdenesAbiertas();
+    else cargarHistorialTransacciones();
+  });
+});
+
+document.getElementById('btn-conectar-wallet').addEventListener('click', conectarMetaMask);
+
+window.addEventListener('DOMContentLoaded', () => {
+  initSupabase();
+  inicializarGrafico();
+  cargarYRenderizarTodo(timeframeActual);
+});
+</script>
+</body>
+  </html>
