@@ -210,33 +210,10 @@ h1,h2{font-family:'Fraunces',serif;}
 <div class="footer-legal">
 <button class="link-legal" id="btn-abrir-legal">Aviso Legal y Términos (resumen)</button>
 <span style="color:#3a2f26;">·</span>
-<button class="link-legal" id="btn-abrir-legal-completo">📜 Términos completos (81 artículos)</button>
+<a class="link-legal" href="terminos-completos.html" target="_blank">📜 Términos completos (81 artículos)</a>
 </div>
 
-<div class="modal-overlay" id="modal-legal-completo">
-<div class="modal-caja amplio">
-<button class="modal-cerrar" id="modal-legal-cerrar">✕</button>
-<h2 class="modal-titulo grande">📜 Términos y Condiciones del Ecosistema Sariel's</h2>
-<div class="modal-texto-legal">
-<p class="capitulo">PREÁMBULO</p>
-<p>El presente documento constituye el marco legal y operativo del Ecosistema Sariel's, estableciendo las bases bajo las cuales el Token TOK opera como un activo de intercambio digital dentro de un ecosistema de fidelización y redención de productos físicos.</p>
-<p class="capitulo">CAPÍTULO I: DISPOSICIONES GENERALES</p>
-<p class="articulo">Artículo 1. Objeto del Ecosistema</p>
-<p>El Ecosistema Sariel's tiene como objeto principal la creación de un sistema de fidelización y recompensa que permita a los titulares de NFTs Sariel's acceder a beneficios y descuentos en la adquisición de productos físicos de la marca, a través de la utilización del Token TOK como medio de intercambio dentro de la plataforma.</p>
-<p class="articulo">Artículo 8. Formación del Precio</p>
-<p><strong>8.1.</strong> El precio del Token TOK se forma exclusivamente a través de las operaciones de compra y venta realizadas entre los usuarios en la plataforma.</p>
-<p><strong>8.3.</strong> La marca Sariel's NO interviene en la formación del precio del Token TOK.</p>
-<p class="articulo">Artículo 10. Quema de Tokens</p>
-<p><strong>10.4.</strong> La quema de Tokens TOK NO afecta directamente el precio del Token TOK; el efecto es indirecto a través de la reducción de oferta.</p>
-<div style="border-top:1px solid #2a221c; margin:16px 0 8px; padding-top:12px; text-align:center; color:#6a5d50; font-size:0.65rem;">
-<p>📅 Última actualización: 10 de julio de 2026</p>
-<p>© 2026 Sariel's Ecosystem — Todos los derechos reservados</p>
-</div>
-</div>
-<button class="btn-aceptar-legal" id="btn-aceptar-legal-completo">✅ Acepto los Términos y Condiciones</button>
-</div>
-</div>
-
+<!-- MODAL DE TÉRMINOS (RESUMEN) -->
 <div class="modal-overlay" id="modal-legal-overlay">
 <div class="modal-caja">
 <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
@@ -285,7 +262,7 @@ document.getElementById('check-aceptar').addEventListener('change', function() {
 
 document.getElementById('abrir-legal-desde-check').addEventListener('click', function(e) {
   e.preventDefault();
-  document.getElementById('modal-legal-completo').classList.add('activo');
+  document.getElementById('modal-legal-overlay').classList.add('activo');
 });
 
 document.getElementById('check-conectar').addEventListener('change', function() {
@@ -303,14 +280,6 @@ document.getElementById('check-conectar').addEventListener('change', function() 
 document.getElementById('btn-abrir-legal').addEventListener('click', () => document.getElementById('modal-legal-overlay').classList.add('activo'));
 document.getElementById('modal-cerrar-btn').addEventListener('click', () => document.getElementById('modal-legal-overlay').classList.remove('activo'));
 document.getElementById('modal-legal-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) document.getElementById('modal-legal-overlay').classList.remove('activo'); });
-document.getElementById('btn-abrir-legal-completo').addEventListener('click', () => document.getElementById('modal-legal-completo').classList.add('activo'));
-document.getElementById('modal-legal-cerrar').addEventListener('click', () => document.getElementById('modal-legal-completo').classList.remove('activo'));
-document.getElementById('modal-legal-completo').addEventListener('click', (e) => { if (e.target === e.currentTarget) document.getElementById('modal-legal-completo').classList.remove('activo'); });
-document.getElementById('btn-aceptar-legal-completo').addEventListener('click', function() {
-  document.getElementById('check-aceptar').checked = true;
-  document.getElementById('check-aceptar').dispatchEvent(new Event('change'));
-  document.getElementById('modal-legal-completo').classList.remove('activo');
-});
 
 async function conectarMetaMask() {
   if (typeof window.ethereum === 'undefined') {
