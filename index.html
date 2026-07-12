@@ -250,6 +250,7 @@ h1,h2{font-family:'Fraunces',serif;}
 <script>
 const supabaseUrl = 'https://kbrlmeylciwocsxndtvv.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImticmxtZXlsY2l3b2NzeG5kdHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MzUzNTMsImV4cCI6MjA5OTIxMTM1M30.OwWk3okFUtUAmidKfcJ4Ldf7qRXr201dkwLkWpIzMFU';
+const EDGE_FUNCTION_URL = 'https://kbrlmeylciwocsxndtvv.supabase.co/functions/v1/validar-transaccion';
 
 let modoActual = 'compra';
 let timeframeActual = '1d';
@@ -573,26 +574,52 @@ function renderizarHistorial(historial) {
 }
 
 async function ejecutarOrden(tipo, cantidad, precio) {
-  if (!walletConectada) { alert('Conecta tu wallet para ejecutar esta operación.'); return; }
+  if (!walletConectada || !providerEthers) { alert('Conecta tu wallet para ejecutar esta operación.'); return; }
+
   const total = cantidad * precio;
   const comision = total * COMISION_PORCENTAJE;
   const totalConComision = total + comision;
+
   const confirmar = confirm(`Confirmar ${tipo}:\nCantidad: ${cantidad} TOK\nPrecio: $${precio.toFixed(4)}\nTotal: $${total.toFixed(4)}\nComisión (1%): $${comision.toFixed(4)}\nTotal a pagar: $${totalConComision.toFixed(4)}`);
   if (!confirmar) return;
+
   try {
-    if (supabaseClient) {
-      const { error } = await supabaseClient.from('tok_transacciones').insert([{
-        wallet: walletConectada.toLowerCase(), tipo, cantidad_tok: cantidad, precio, total, comision,
-        tx_hash: '0x' + Math.random().toString(16).substring(2, 10), created_at: new Date().toISOString()
-      }]);
-      if (error) throw error;
+    const timestamp = Date.now();
+    const mensaje = `Sariel's Ecosystem - Confirmar orden\nTipo: ${tipo}\nCantidad: ${cantidad}\nPrecio: ${precio}\nTimestamp: ${timestamp}`;
+
+    const signer = providerEthers.getSigner();
+    const firma = await signer.signMessage(mensaje);
+
+    const resp = await fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer ' + supabaseKey
+      },
+      body: JSON.stringify({
+        wallet: walletConectada,
+        tipo, cantidad_tok: cantidad, precio, timestamp, firma
+      })
+    });
+
+    const resultado = await resp.json();
+
+    if (!resp.ok || !resultado.success) {
+      throw new Error(resultado.error || 'Error desconocido al validar la orden');
     }
+
     alert(`✅ ${tipo} ejecutada con éxito!\n${cantidad} TOK @ $${precio.toFixed(4)}\nTotal: $${total.toFixed(4)}\nComisión: $${comision.toFixed(4)}`);
     await actualizarSaldos();
     await cargarOrdenesAbiertas();
+
   } catch (err) {
     console.error('Error ejecutando orden:', err);
-    alert('❌ Error al ejecutar la orden: ' + err.message);
+    if (err.code === 4001 || err.code === 'ACTION_REJECTED') {
+      alert('Cancelaste la firma — la orden no se guardó.');
+    } else {
+      alert('❌ Error al ejecutar la orden: ' + err.message);
+    }
   }
 }
 
