@@ -110,17 +110,10 @@ h1,h2{font-family:'Fraunces',serif;}
 .modal-overlay{display:none;position:fixed;top:0; left:0;width:100%; height:100%;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
 .modal-overlay.activo{display:flex;}
 .modal-caja{background:var(--panel);border-radius:14px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;padding:20px 16px;border:1px solid #2a221c;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative;}
-.modal-caja.amplio{max-width:600px;}
 .modal-cerrar{position:absolute;top:10px;right:10px;background:#0d0b0a;border:1px solid #1f1a16;color:var(--texto);width:26px;height:26px;border-radius:50%;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .modal-titulo{font-family:'Fraunces',serif;color:var(--trigo);font-size:1rem;margin-bottom:12px;padding-right:30px;}
-.modal-titulo.grande{font-size:1.1rem;}
 .modal-punto{margin-bottom:10px;font-size:0.8rem;line-height:1.5;color:#b8a898;}
 .modal-punto strong{color:var(--trigo);}
-.modal-texto-legal{max-height:60vh;overflow-y:auto;padding-right:8px;font-size:0.75rem;color:#b8a898;line-height:1.6;}
-.modal-texto-legal .capitulo{color:var(--trigo);font-weight:600;margin:12px 0 6px;}
-.modal-texto-legal .articulo{color:#d4af7a;margin:6px 0 2px;font-weight:500;}
-.btn-aceptar-legal{width:100%;margin-top:12px;padding:10px;background:linear-gradient(135deg, var(--trigo), #b8945a);border:none;border-radius:8px;color:var(--masa);font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
-.btn-aceptar-legal:hover{transform:scale(1.01); box-shadow:0 4px 20px rgba(212,175,122,0.2);}
 </style>
 </head>
 <body>
@@ -213,7 +206,6 @@ h1,h2{font-family:'Fraunces',serif;}
 <a class="link-legal" href="terminos-completos.html" target="_blank">📜 Términos completos (81 artículos)</a>
 </div>
 
-<!-- MODAL DE TÉRMINOS (RESUMEN) -->
 <div class="modal-overlay" id="modal-legal-overlay">
 <div class="modal-caja">
 <button class="modal-cerrar" id="modal-cerrar-btn">✕</button>
@@ -249,6 +241,47 @@ const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
 const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
 const ABI_ERC20_MINIMO = ["function balanceOf(address owner) view returns (uint256)","function decimals() view returns (uint8)"];
 
+const CHAIN_ID_AMOY = '0x13882';
+
+function isValidAddress(addr) {
+  return /^0x[0-9a-fA-F]{40}$/.test(addr);
+}
+
+function handleAccountsChanged(cuentas) {
+  if (cuentas.length > 0) {
+    walletConectada = cuentas[0];
+    document.getElementById('wallet-direccion').textContent = walletConectada.slice(0, 6) + '...' + walletConectada.slice(-4);
+    actualizarSaldos();
+  } else {
+    desconectarWallet();
+  }
+}
+
+function handleChainChanged(chainId) {
+  if (chainId !== CHAIN_ID_AMOY) {
+    alert('Conectaste una red distinta a Polygon Amoy. Se cerrará la conexión por seguridad.');
+    desconectarWallet();
+  } else {
+    actualizarSaldos();
+  }
+}
+
+function desconectarWallet() {
+  walletConectada = null;
+  providerEthers = null;
+  document.getElementById('btn-conectar-wallet').style.display = 'block';
+  document.getElementById('wallet-info').style.display = 'none';
+  document.getElementById('estado-conexion').className = 'estado-conexion';
+  document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Desconectado';
+  document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
+  document.getElementById('check-conectar').checked = false;
+
+  if (window.ethereum && window.ethereum.removeListener) {
+    window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+    window.ethereum.removeListener('chainChanged', handleChainChanged);
+  }
+}
+
 function initSupabase() {
   const { createClient } = supabase;
   supabaseClient = createClient(supabaseUrl, supabaseKey);
@@ -267,14 +300,7 @@ document.getElementById('abrir-legal-desde-check').addEventListener('click', fun
 
 document.getElementById('check-conectar').addEventListener('change', function() {
   if (this.checked) conectarMetaMask();
-  else {
-    walletConectada = null; providerEthers = null;
-    document.getElementById('btn-conectar-wallet').style.display = 'block';
-    document.getElementById('wallet-info').style.display = 'none';
-    document.getElementById('estado-conexion').className = 'estado-conexion';
-    document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Desconectado';
-    document.getElementById('contenido-portafolio').innerHTML = '<p class="vacio-portafolio">Conecta tu wallet para ver tus órdenes.</p>';
-  }
+  else desconectarWallet();
 });
 
 document.getElementById('btn-abrir-legal').addEventListener('click', () => document.getElementById('modal-legal-overlay').classList.add('activo'));
@@ -289,14 +315,21 @@ async function conectarMetaMask() {
   }
   try {
     const cuentas = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+    if (!isValidAddress(cuentas[0])) {
+      alert('MetaMask devolvió una dirección con formato inválido.');
+      document.getElementById('check-conectar').checked = false;
+      return;
+    }
+
     walletConectada = cuentas[0];
     try {
-      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x13882' }] });
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_ID_AMOY }] });
     } catch (switchError) {
       if (switchError.code === 4902) {
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
-          params: [{ chainId: '0x13882', chainName: 'Polygon Amoy', nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }, rpcUrls: ['https://rpc-amoy.polygon.technology/'], blockExplorerUrls: ['https://amoy.polygonscan.com/'] }]
+          params: [{ chainId: CHAIN_ID_AMOY, chainName: 'Polygon Amoy', nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }, rpcUrls: ['https://rpc-amoy.polygon.technology/'], blockExplorerUrls: ['https://amoy.polygonscan.com/'] }]
         });
       } else throw switchError;
     }
@@ -309,19 +342,9 @@ async function conectarMetaMask() {
     document.getElementById('check-conectar').checked = true;
     document.getElementById('estado-conexion').className = 'estado-conexion conectado';
     document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
-    window.ethereum.on('accountsChanged', (cuentas) => {
-      if (cuentas.length > 0) {
-        walletConectada = cuentas[0];
-        document.getElementById('wallet-direccion').textContent = walletConectada.slice(0, 6) + '...' + walletConectada.slice(-4);
-        actualizarSaldos();
-      } else {
-        document.getElementById('check-conectar').checked = false;
-        walletConectada = null;
-        document.getElementById('btn-conectar-wallet').style.display = 'block';
-        document.getElementById('wallet-info').style.display = 'none';
-      }
-    });
-    window.ethereum.on('chainChanged', () => window.location.reload());
+
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    window.ethereum.on('chainChanged', handleChainChanged);
   } catch (err) {
     console.error(err);
     alert('No se pudo conectar la wallet.');
