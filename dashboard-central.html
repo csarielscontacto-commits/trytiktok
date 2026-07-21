@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Central | Sariel's Ecosystem</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/dashboard-central.css">
+<link rel="stylesheet" href="css/dashboard-cards.css">
+<link rel="stylesheet" href="css/dashboard-effects.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script src="config.js"></script>
+
+</head>
+
+<body>
+
+<div id="particles"></div>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+
+<div class="logo">
+
+<img src="assets/logos/logo.png">
+
+<h2>SARIEL'S<br>ECOSYSTEM</h2>
+
+</div>
+
+<nav>
+
+<a class="active">Dashboard Central</a>
+
+<a>Ventas</a>
+
+<a>Clientes</a>
+
+<a>Fidelización (TOK)</a>
+
+<a>NFT Center</a>
+
+<a>Marketplace</a>
+
+<a>Red Social</a>
+
+<a>IA Predictiva</a>
+
+<a>Inventario</a>
+
+<a>Producción</a>
+
+<a>Proveedores</a>
+
+<a>Cronos</a>
+
+<a>Pagos</a>
+
+<a>Reportes</a>
+
+<a>Configuración</a>
+
+<a>Seguridad</a>
+
+</nav>
+
+</aside>
+
+<main>
+
+<header class="topbar">
+
+<h1>SARIEL'S ECOSYSTEM CORE</h1>
+
+<div class="estado">
+
+<span class="online"></span>
+
+EN LÍNEA
+
+</div>
+
+</header>
+
+<section class="cards-top">
+
+<div class="card">
+
+<h3>VENTAS HOY</h3>
+
+<h2>$12,450.75</h2>
+
+<canvas id="ventasChart"></canvas>
+
+</div>
+
+<div class="card">
+
+<h3>CLIENTES ACTIVOS</h3>
+
+<h2>1,248</h2>
+
+<canvas id="clientesChart"></canvas>
+
+</div>
+
+<div class="card">
+
+<h3>TOK OTORGADOS</h3>
+
+<h2>3,245</h2>
+
+<canvas id="tokChart"></canvas>
+
+</div>
+
+<div class="card">
+
+<h3>NFT ACTIVOS</h3>
+
+<h2>18</h2>
+
+<canvas id="nftChart"></canvas>
+
+</div>
+
+</section>
+
+<section class="centro">
+
+<div class="wallet">
+
+<h2>Wallet Sariel</h2>
+
+<p>Saldo STOK</p>
+
+<h1>1248</h1>
+
+<button>Abrir Cartera</button>
+
+</div>
+
+<div class="core">
+
+<div class="ring ring1"></div>
+
+<div class="ring ring2"></div>
+
+<div class="ring ring3"></div>
+
+<div class="logoCore">
+
+<img src="assets/logos/logo.png">
+
+</div>
+
+<h2>SARIEL'S ECOSYSTEM CORE</h2>
+
+<p>Motor Central IA</p>
+
+</div>
+
+<div class="social">
+
+<h2>Red Social</h2>
+
+<h1>2,845</h1>
+
+<p>Usuarios Activos</p>
+
+<button>Abrir Red</button>
+
+</div>
+
+</section>
+
+<section class="cards-bottom">
+
+<div class="card">
+<h3>Dashboard Empresarial</h3>
+<button>Abrir</button>
+</div>
+
+<div class="card">
+<h3>Marketplace</h3>
+<button>Entrar</button>
+</div>
+
+<div class="card">
+<h3>NFT Center</h3>
+<button>Entrar</button>
+</div>
+
+<div class="card">
+<h3>IA Predictiva</h3>
+<button>Abrir</button>
+</div>
+
+<div class="card">
+<h3>Inventario Inteligente</h3>
+<button>Abrir</button>
+</div>
+
+<div class="card">
+<h3>Producción</h3>
+<button>Abrir</button>
+</div>
+
+<div class="card">
+<h3>Proveedores</h3>
+<button>Abrir</button>
+</div>
+
+<div class="card">
+<h3>Cronos</h3>
+<button>Abrir</button>
+</div>
+
+<div class="card">
+<h3>Blockchain</h3>
+<button>Ver</button>
+</div>
+
+<div class="card">
+<h3>Base de Datos</h3>
+<button>Ver</button>
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<script src="js/dashboard-central.js"></script>
+<script src="js/dashboard-animation.js"></script>
+<script src="js/dashboard-wallet.js"></script>
+<script src="js/dashboard-charts.js"></script>
+
+</body>
+
+  </html>
