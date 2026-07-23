@@ -8,6 +8,10 @@
 <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- ===== CONFIG CENTRALIZADA ===== -->
+<script src="./config.js"></script>
+
 <style>
 :root{
 --masa:#0d0b0a; --trigo:#d4af7a; --horno:#e85d3d;
@@ -583,6 +587,37 @@ cursor:pointer;
 transition:all 0.2s;
 }
 .btn-aceptar-legal:hover{transform:scale(1.01); box-shadow:0 4px 20px rgba(212,175,122,0.2);}
+
+/* ===== BOTÓN DE RETORNO ===== */
+.btn-volver{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:8px 16px;
+background:rgba(212,175,122,0.1);
+border:1px solid rgba(212,175,122,0.2);
+border-radius:8px;
+color:var(--trigo);
+font-size:0.7rem;
+font-weight:500;
+text-decoration:none;
+transition:all 0.2s;
+cursor:pointer;
+margin:8px 16px 0;
+}
+.btn-volver:hover{
+background:rgba(212,175,122,0.2);
+transform:translateY(-1px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+.header-precio .precio-actual{font-size:1.1rem;}
+.panel-wallet{margin:8px 8px 0;}
+.panel-operar{margin:8px;}
+.panel-portafolio{margin:8px;}
+.btn-volver{margin:6px 12px 0; font-size:0.65rem; padding:6px 12px;}
+}
 </style>
 </head>
 <body>
@@ -603,6 +638,11 @@ transition:all 0.2s;
 <span class="cambio-pct" id="cambio-pct">--</span>
 </div>
 </div>
+
+<!-- ===== VOLVER AL DASHBOARD ===== -->
+<a href="./mi-red.html" class="btn-volver">
+    ← Volver a Mi Red
+</a>
 
 <!-- ESTADO -->
 <div class="estado-conexion" id="estado-conexion">
@@ -869,11 +909,37 @@ He leído y acepto los <strong id="abrir-legal-desde-check">Términos y Condicio
 
 <script>
 // ================================================================
-// CONFIGURACIÓN
+// CONFIGURACIÓN CENTRALIZADA DESDE config.js
 // ================================================================
-const supabaseUrl = 'https://tu-proyecto.supabase.co';
-const supabaseKey = 'tu-clave-publica-anonima';
 
+// Usar variables de CONFIG (definido en config.js)
+// Si no existe CONFIG, usar valores por defecto
+const CONFIG_LOCAL = typeof CONFIG !== 'undefined' ? CONFIG : {};
+
+// ===== SUPABASE =====
+const supabaseUrl = CONFIG_LOCAL.SUPABASE?.URL || 'https://tu-proyecto.supabase.co';
+const supabaseKey = CONFIG_LOCAL.SUPABASE?.ANON_KEY || 'tu-clave-publica-anonima';
+
+// ===== TRADING =====
+const COMISION_PORCENTAJE = CONFIG_LOCAL.TOK?.COMISION_PORCENTAJE || 0.01;
+const TOK_POR_NFT = CONFIG_LOCAL.TOK?.POR_NFT || 12;
+const PRECIO_DOMO_MXN = CONFIG_LOCAL.PRECIO_UNITARIO || 75.00;
+const VALOR_REDENCION_TOK = PRECIO_DOMO_MXN / TOK_POR_NFT;
+
+// ===== CONTRATOS =====
+const DIRECCION_CONTRATO_TOK = CONFIG_LOCAL.CONTRATOS?.TOK || "0x0000000000000000000000000000000000000000";
+const DIRECCION_CONTRATO_PAGO = CONFIG_LOCAL.CONTRATOS?.PAGO || "0x0000000000000000000000000000000000000000";
+
+// ===== WEB3 =====
+const CHAIN_ID = CONFIG_LOCAL.WEB3_REWARDS?.CHAIN?.ID || 80002;
+const CHAIN_HEX = CONFIG_LOCAL.WEB3_REWARDS?.CHAIN?.HEX_ID || '0x13882';
+const CHAIN_NAME = CONFIG_LOCAL.WEB3_REWARDS?.CHAIN?.NAME || 'Polygon Amoy';
+const RPC_URL = CONFIG_LOCAL.WEB3_REWARDS?.CHAIN?.RPC_URL || 'https://rpc-amoy.polygon.technology';
+const EXPLORADOR_BASE = CONFIG_LOCAL.WEB3_REWARDS?.CHAIN?.EXPLORER || 'https://amoy.polygonscan.com/tx/';
+
+// ================================================================
+// VARIABLES GLOBALES
+// ================================================================
 let modoActual = 'compra';
 let timeframeActual = '1d';
 let chart, seriesVelas, chartIndicador, seriesIndicador;
@@ -883,15 +949,6 @@ let providerEthers = null;
 let panelPortafolioActivo = 'ordenes';
 let supabaseClient = null;
 let datosVelas = [];
-
-const EXPLORADOR_BASE = "https://amoy.polygonscan.com/tx/";
-const COMISION_PORCENTAJE = 0.01;
-const TOK_POR_NFT = 12;
-const PRECIO_DOMO_MXN = 75.00;
-const VALOR_REDENCION_TOK = PRECIO_DOMO_MXN / TOK_POR_NFT;
-
-const DIRECCION_CONTRATO_TOK = "0x0000000000000000000000000000000000000000";
-const DIRECCION_CONTRATO_PAGO = "0x0000000000000000000000000000000000000000";
 
 const ABI_ERC20_MINIMO = [
 "function balanceOf(address owner) view returns (uint256)",
@@ -903,11 +960,15 @@ const ABI_ERC20_MINIMO = [
 // ================================================================
 function initSupabase() {
 if (typeof supabaseUrl !== 'undefined' && supabaseUrl !== 'https://tu-proyecto.supabase.co') {
+try {
 const { createClient } = supabase;
 supabaseClient = createClient(supabaseUrl, supabaseKey);
 console.log('✅ Supabase inicializado');
+} catch (err) {
+console.warn('⚠️ Error inicializando Supabase:', err);
+}
 } else {
-console.warn('⚠️ Configura tu URL y clave de Supabase');
+console.warn('⚠️ Configura tu URL y clave de Supabase en config.js');
 }
 }
 
@@ -982,18 +1043,18 @@ walletConectada = cuentas[0];
 try {
 await window.ethereum.request({
 method: 'wallet_switchEthereumChain',
-params: [{ chainId: '0x13882' }]
+params: [{ chainId: CHAIN_HEX }]
 });
 } catch (switchError) {
 if (switchError.code === 4902) {
 await window.ethereum.request({
 method: 'wallet_addEthereumChain',
 params: [{
-chainId: '0x13882',
-chainName: 'Polygon Amoy',
+chainId: CHAIN_HEX,
+chainName: CHAIN_NAME,
 nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-rpcUrls: ['https://rpc-amoy.polygon.technology/'],
-blockExplorerUrls: ['https://amoy.polygonscan.com/']
+rpcUrls: [RPC_URL],
+blockExplorerUrls: [EXPLORADOR_BASE]
 }]
 });
 } else throw switchError;
@@ -1010,7 +1071,7 @@ await actualizarSaldos();
 await cargarOrdenesAbiertas();
 document.getElementById('check-conectar').checked = true;
 document.getElementById('estado-conexion').className = 'estado-conexion conectado';
-document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a Polygon Amoy';
+document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Conectado a ' + CHAIN_NAME;
 
 window.ethereum.on('accountsChanged', (cuentas) => {
 if (cuentas.length > 0) {
@@ -1233,7 +1294,7 @@ return ema;
 // ================================================================
 function generarVelasMock(n) {
 const velas = [];
-let precio = 6.25;
+let precio = VALOR_REDENCION_TOK || 6.25;
 const ahora = Math.floor(Date.now() / 1000);
 const intervalo = 86400;
 for (let i = n; i > 0; i--) {
@@ -1358,8 +1419,8 @@ console.warn('Error obteniendo órdenes:', err);
 }
 
 const ordenesMock = [
-{ id: '1', tipo: 'compra', cantidad_tok: 150, precio: 6.25 },
-{ id: '2', tipo: 'venta', cantidad_tok: 75, precio: 6.50 }
+{ id: '1', tipo: 'compra', cantidad_tok: 150, precio: VALOR_REDENCION_TOK || 6.25 },
+{ id: '2', tipo: 'venta', cantidad_tok: 75, precio: (VALOR_REDENCION_TOK || 6.25) * 1.04 }
 ];
 renderizarOrdenesAbiertas(ordenesMock);
 }
@@ -1433,8 +1494,8 @@ console.warn('Error obteniendo historial:', err);
 }
 
 const historialMock = [
-{ id: 'tx1', tipo: 'compra', cantidad_tok: 100, precio: 6.25, tx_hash: '0xabc123' },
-{ id: 'tx2', tipo: 'venta', cantidad_tok: 50, precio: 6.40, tx_hash: '0xdef456' }
+{ id: 'tx1', tipo: 'compra', cantidad_tok: 100, precio: VALOR_REDENCION_TOK || 6.25, tx_hash: '0xabc123' },
+{ id: 'tx2', tipo: 'venta', cantidad_tok: 50, precio: (VALOR_REDENCION_TOK || 6.25) * 1.02, tx_hash: '0xdef456' }
 ];
 renderizarHistorial(historialMock);
 }
@@ -1579,7 +1640,10 @@ initSupabase();
 inicializarGrafico();
 cargarYRenderizarTodo(timeframeActual);
 document.getElementById('estado-conexion').innerHTML = '<span class="dot"></span> Listo - Conecta MetaMask para operar';
+
+console.log('📈 Trading TOK integrado con config.js');
+console.log('💰 Valor redención TOK: $' + VALOR_REDENCION_TOK + ' MXN');
 });
 </script>
 </body>
-  </html>
+</html>
